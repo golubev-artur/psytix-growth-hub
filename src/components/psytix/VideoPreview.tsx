@@ -1,19 +1,42 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import trainingVideo from "@/assets/training-video.mp4";
+import trainingVideoPart1 from "@/assets/training-video-part1.mp4";
+import trainingVideoPart2 from "@/assets/training-video-part2.mp4";
 
 const VideoPreview = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [currentPart, setCurrentPart] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videos = [trainingVideoPart1, trainingVideoPart2];
+
+  const handleEnded = useCallback(() => {
+    if (currentPart < videos.length - 1) {
+      const next = currentPart + 1;
+      setCurrentPart(next);
+      if (videoRef.current) {
+        videoRef.current.src = videos[next];
+        videoRef.current.play();
+      }
+    } else {
+      setCurrentPart(0);
+      if (videoRef.current) {
+        videoRef.current.src = videos[0];
+      }
+      setIsPlaying(false);
+    }
+  }, [currentPart, videos]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (isPlaying) {
       videoRef.current.pause();
     } else {
+      if (!isPlaying && currentPart === 0) {
+        videoRef.current.src = videos[0];
+      }
       videoRef.current.play();
     }
     setIsPlaying(!isPlaying);
@@ -39,7 +62,7 @@ const VideoPreview = () => {
             Посмотрите, как <span className="gradient-text">это работает</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Наши эксперты помогают увеличить результативность любой компании
+            Наш эксперт помогает увеличить результативность любой компании
           </p>
         </motion.div>
 
@@ -53,12 +76,11 @@ const VideoPreview = () => {
           <div className="relative rounded-2xl overflow-hidden shadow-xl glass-card aspect-video group cursor-pointer">
             <video
               ref={videoRef}
-              src={trainingVideo}
+              src={trainingVideoPart1}
               className="w-full h-full object-cover"
-              loop
               muted
               playsInline
-              onEnded={() => setIsPlaying(false)}
+              onEnded={handleEnded}
             />
 
             {/* Play/Pause overlay */}
