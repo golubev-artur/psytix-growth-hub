@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Play, X } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import trainingVideo from "@/assets/training-video.mp4";
 
 const VideoPreview = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
 
   return (
     <section id="video" className="py-20">
@@ -20,7 +39,7 @@ const VideoPreview = () => {
             Посмотрите, как <span className="gradient-text">это работает</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            2 минуты, которые изменят ваш подход к обучению
+            Наши эксперты помогают увеличить результативность любой компании
           </p>
         </motion.div>
 
@@ -32,50 +51,58 @@ const VideoPreview = () => {
           className="max-w-4xl mx-auto"
         >
           <div className="relative rounded-2xl overflow-hidden shadow-xl glass-card aspect-video group cursor-pointer">
-            {isPlaying ? (
-              <div className="relative w-full h-full bg-foreground/5">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-lg text-muted-foreground mb-4">Видео-превью загружается...</p>
-                    <p className="text-sm text-muted-foreground/60">Здесь будет ваше промо-видео</p>
-                  </div>
-                </div>
+            <video
+              ref={videoRef}
+              src={trainingVideo}
+              className="w-full h-full object-cover"
+              loop
+              muted
+              playsInline
+              onEnded={() => setIsPlaying(false)}
+            />
+
+            {/* Play/Pause overlay */}
+            <div
+              className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
+              style={{ opacity: isPlaying ? 0 : 1 }}
+              onClick={togglePlay}
+            >
+              <div className="absolute inset-0 bg-foreground/20" />
+              <motion.div
+                className="relative w-20 h-20 rounded-full gradient-primary flex items-center justify-center shadow-glow z-10"
+                whileHover={{ scale: 1.1 }}
+                animate={{
+                  boxShadow: [
+                    "0 0 40px -10px hsl(217 91% 60% / 0.3)",
+                    "0 0 60px -10px hsl(217 91% 60% / 0.5)",
+                    "0 0 40px -10px hsl(217 91% 60% / 0.3)",
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Play className="w-8 h-8 text-primary-foreground ml-1" />
+              </motion.div>
+            </div>
+
+            {/* Controls when playing */}
+            {isPlaying && (
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-3">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-4 right-4 bg-foreground/10 hover:bg-foreground/20 rounded-full"
-                  onClick={() => setIsPlaying(false)}
+                  className="text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
+                  onClick={(e) => { e.stopPropagation(); togglePlay(); }}
                 >
-                  <X className="w-5 h-5" />
+                  <Pause className="w-5 h-5" />
                 </Button>
-              </div>
-            ) : (
-              <div
-                className="w-full h-full gradient-hero flex items-center justify-center"
-                onClick={() => setIsPlaying(true)}
-              >
-                {/* Decorative pattern */}
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                  backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)`,
-                  backgroundSize: "40px 40px"
-                }} />
-                
-                <div className="relative text-center">
-                  <motion.div
-                    className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow"
-                    whileHover={{ scale: 1.1 }}
-                    animate={{ boxShadow: [
-                      "0 0 40px -10px hsl(217 91% 60% / 0.3)",
-                      "0 0 60px -10px hsl(217 91% 60% / 0.5)",
-                      "0 0 40px -10px hsl(217 91% 60% / 0.3)",
-                    ]}}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <Play className="w-8 h-8 text-primary-foreground ml-1" />
-                  </motion.div>
-                  <p className="text-foreground font-semibold text-lg">Смотреть презентацию</p>
-                  <p className="text-muted-foreground text-sm mt-1">2:30 · Обзор платформы</p>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-primary-foreground hover:bg-primary-foreground/20 rounded-full"
+                  onClick={(e) => { e.stopPropagation(); toggleMute(); }}
+                >
+                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </Button>
               </div>
             )}
           </div>
