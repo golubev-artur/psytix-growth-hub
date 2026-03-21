@@ -5,7 +5,6 @@ import CourseSection from "@/components/psytix/CourseSection";
 import VideoPreview from "@/components/psytix/VideoPreview";
 import QuizTest from "@/components/psytix/QuizTest";
 import ValueCalculator from "@/components/psytix/ValueCalculator";
-import BlogSection from "@/components/psytix/BlogSection";
 import AIChatAssistant from "@/components/psytix/AIChatAssistant";
 import TestimonialPopup from "@/components/psytix/TestimonialPopup";
 import Footer from "@/components/psytix/Footer";
@@ -36,7 +35,6 @@ const Index = () => {
 
       <QuizTest />
       <ValueCalculator />
-      <BlogSection />
       <Footer />
 
       {/* Overlays */}

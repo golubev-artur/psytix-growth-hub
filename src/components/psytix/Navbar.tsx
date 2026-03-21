@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Brain, TrendingUp, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-const navItems = [
+const anchorItems = [
   { label: "Психология", href: "#psychology" },
   { label: "Продажи", href: "#sales" },
   { label: "Видео", href: "#video" },
   { label: "Квиз", href: "#quiz" },
-  { label: "Блог", href: "#blog" },
 ];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -23,8 +26,14 @@ const Navbar = () => {
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
-    const el = document.querySelector(href);
-    el?.scrollIntoView({ behavior: "smooth" });
+    if (!isHome) {
+      navigate("/");
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    } else {
+      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -33,18 +42,18 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-card shadow-sm" : "bg-transparent"
+        scrolled || !isHome ? "glass-card shadow-sm" : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between h-16">
-        <a href="#" className="text-xl font-bold gradient-text flex items-center gap-2">
+        <Link to="/" className="text-xl font-bold gradient-text flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
           Psytix
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
-          {navItems.map((item) => (
+          {anchorItems.map((item) => (
             <button
               key={item.href}
               onClick={() => scrollTo(item.href)}
@@ -53,6 +62,16 @@ const Navbar = () => {
               {item.label}
             </button>
           ))}
+          <Link
+            to="/blog"
+            className={`text-sm transition-colors ${
+              location.pathname === "/blog"
+                ? "text-primary font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Блог
+          </Link>
           <Button
             size="sm"
             className="gradient-primary text-primary-foreground rounded-lg shadow-glow-sm hover:scale-105 transition-transform"
@@ -81,7 +100,7 @@ const Navbar = () => {
           className="md:hidden glass-card border-t border-border"
         >
           <nav className="container mx-auto px-6 py-4 flex flex-col gap-3">
-            {navItems.map((item) => (
+            {anchorItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollTo(item.href)}
@@ -90,6 +109,13 @@ const Navbar = () => {
                 {item.label}
               </button>
             ))}
+            <Link
+              to="/blog"
+              onClick={() => setMobileOpen(false)}
+              className="text-sm text-muted-foreground hover:text-foreground py-2"
+            >
+              Блог
+            </Link>
             <Button
               className="gradient-primary text-primary-foreground rounded-lg w-full mt-2"
               onClick={() => scrollTo("#quiz")}
