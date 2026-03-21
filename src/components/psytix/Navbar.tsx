@@ -8,6 +8,7 @@ const navItems = [
   { label: "Продажи", href: "#sales" },
   { label: "Видео", href: "#video" },
   { label: "Квиз", href: "#quiz" },
+  { label: "Блог", href: "#blog" },
 ];
 
 const Navbar = () => {
