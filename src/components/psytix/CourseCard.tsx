@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import MetricsChart from "./MetricsChart";
 import CaseSlider from "./CaseSlider";
 import type { CourseBlock } from "@/data/courses";
@@ -12,6 +14,7 @@ interface CourseCardProps {
 const CourseCard = ({ course, index }: CourseCardProps) => {
   const Icon = course.icon;
   const BenefitIcon = course.benefitIcon;
+  const navigate = useNavigate();
 
   return (
     <motion.div
@@ -19,7 +22,8 @@ const CourseCard = ({ course, index }: CourseCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="glass-card rounded-2xl overflow-hidden card-3d group"
+      className="glass-card rounded-2xl overflow-hidden card-3d group cursor-pointer"
+      onClick={() => navigate(`/module/${course.id}`)}
     >
       <div className="p-6">
         {/* Header */}
@@ -55,6 +59,14 @@ const CourseCard = ({ course, index }: CourseCardProps) => {
 
         {/* Case Slider */}
         <CaseSlider cases={course.cases} />
+
+        {/* CTA Button */}
+        <Button
+          className="w-full mt-4 gradient-primary text-primary-foreground rounded-xl"
+          onClick={(e) => { e.stopPropagation(); navigate(`/module/${course.id}`); }}
+        >
+          Подробнее о модуле
+        </Button>
       </div>
     </motion.div>
   );
