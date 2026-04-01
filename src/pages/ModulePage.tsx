@@ -14,6 +14,7 @@ import { psychologyBlocks, salesBlocks } from "@/data/courses";
 import { moduleDetails } from "@/data/moduleDetails";
 import Navbar from "@/components/psytix/Navbar";
 import Footer from "@/components/psytix/Footer";
+import { Helmet } from "react-helmet-async";
 
 const ModulePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,8 +47,21 @@ const ModulePage = () => {
     setFormOpen(false);
   };
 
+  const categoryLabel = course.category === "psychology" ? "Психология" : "Продажи";
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{course.title} — {categoryLabel} | Psytix</title>
+        <meta name="description" content={`${course.description} Узнайте этапы обучения, реальные кейсы и статистику результатов. ${course.benefitText}.`} />
+        <meta property="og:title" content={`${course.title} | Psytix`} />
+        <meta property="og:description" content={course.description} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://psytix.ru/module/${id}`} />
+        <meta property="og:image" content="https://psytix.ru/og-image.png" />
+        <meta property="og:site_name" content="Psytix" />
+        <link rel="canonical" href={`https://psytix.ru/module/${id}`} />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

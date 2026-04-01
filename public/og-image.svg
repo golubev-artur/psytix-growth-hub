@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1030;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="120" r="200" fill="#7C3AED" opacity="0.08" />
+  <circle cx="150" cy="520" r="150" fill="#a855f7" opacity="0.06" />
+
+  <!-- Top accent line -->
+  <rect x="80" y="80" width="120" height="4" rx="2" fill="url(#accent)" />
+
+  <!-- Logo icon -->
+  <g transform="translate(80, 110)">
+    <rect width="64" height="64" rx="16" fill="#7C3AED" opacity="0.2" />
+    <svg x="12" y="12" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+    </svg>
+  </g>
+
+  <!-- Main title -->
+  <text x="80" y="260" font-family="Arial, sans-serif" font-size="80" font-weight="900" fill="white" letter-spacing="-2">Psytix</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="330" font-family="Arial, sans-serif" font-size="34" font-weight="400" fill="#a78bfa">Психология и продажи в одной системе</text>
+
+  <!-- Description -->
+  <text x="80" y="400" font-family="Arial, sans-serif" font-size="22" fill="#94a3b8">16 научных модулей · Реальные кейсы · Измеримый результат</text>
+
+  <!-- Stats row -->
+  <g transform="translate(80, 460)">
+    <!-- Stat 1 -->
+    <rect width="200" height="80" rx="12" fill="#7C3AED" opacity="0.15" />
+    <text x="20" y="30" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#a855f7">+62%</text>
+    <text x="20" y="58" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">конверсия</text>
+
+    <!-- Stat 2 -->
+    <rect x="220" width="200" height="80" rx="12" fill="#7C3AED" opacity="0.15" />
+    <text x="240" y="30" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#a855f7">×3</text>
+    <text x="240" y="58" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">рост продаж</text>
+
+    <!-- Stat 3 -->
+    <rect x="440" width="200" height="80" rx="12" fill="#7C3AED" opacity="0.15" />
+    <text x="460" y="30" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#a855f7">16</text>
+    <text x="460" y="58" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">модулей</text>
+  </g>
+
+  <!-- URL -->
+  <text x="1120" y="590" font-family="Arial, sans-serif" font-size="20" fill="#475569" text-anchor="end">psytix.ru</text>
+</svg>
