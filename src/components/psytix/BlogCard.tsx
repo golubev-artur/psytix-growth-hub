@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { Calendar, Clock, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   ResponsiveContainer,
@@ -14,11 +15,8 @@ import {
 } from 'recharts';
 import type { BlogPost } from '@/data/blogData';
 
-const CHART_COLORS = ['#7C3AED', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
-
 interface BlogCardProps {
   post: BlogPost;
-  onReadMore: (post: BlogPost) => void;
   onStart: () => void;
   index?: number;
 }
@@ -31,10 +29,7 @@ const MiniChart = ({ post }: { post: BlogPost }) => {
     return (
       <BarChart data={post.chartData}>
         <XAxis dataKey="name" hide />
-        <Tooltip
-          contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }}
-          labelStyle={{ color: '#a78bfa' }}
-        />
+        <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
         <Bar dataKey={firstKey} fill={color} radius={[3, 3, 0, 0]} />
       </BarChart>
     );
@@ -43,10 +38,7 @@ const MiniChart = ({ post }: { post: BlogPost }) => {
     return (
       <LineChart data={post.chartData}>
         <XAxis dataKey="name" hide />
-        <Tooltip
-          contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }}
-          labelStyle={{ color: '#a78bfa' }}
-        />
+        <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
         <Line type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} dot={false} />
       </LineChart>
     );
@@ -54,28 +46,20 @@ const MiniChart = ({ post }: { post: BlogPost }) => {
   return (
     <AreaChart data={post.chartData}>
       <XAxis dataKey="name" hide />
-      <Tooltip
-        contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }}
-        labelStyle={{ color: '#a78bfa' }}
-      />
+      <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
       <defs>
         <linearGradient id={`grad-${post.id}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="5%" stopColor={color} stopOpacity={0.4} />
           <stop offset="95%" stopColor={color} stopOpacity={0.0} />
         </linearGradient>
       </defs>
-      <Area
-        type="monotone"
-        dataKey={firstKey}
-        stroke={color}
-        strokeWidth={2}
-        fill={`url(#grad-${post.id})`}
-      />
+      <Area type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} fill={`url(#grad-${post.id})`} />
     </AreaChart>
   );
 };
 
-const BlogCard = ({ post, onReadMore, onStart, index = 0 }: BlogCardProps) => {
+const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
+  const navigate = useNavigate();
   const isPsy = post.category === 'psychology';
   const badgeClass = isPsy
     ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
@@ -95,7 +79,8 @@ const BlogCard = ({ post, onReadMore, onStart, index = 0 }: BlogCardProps) => {
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.07 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="glass-card rounded-2xl overflow-hidden flex flex-col h-full group"
+      className="glass-card rounded-2xl overflow-hidden flex flex-col h-full group cursor-pointer"
+      onClick={() => navigate(`/blog/${post.id}`)}
     >
       {/* Category badge */}
       <div className="px-5 pt-5">
@@ -134,20 +119,11 @@ const BlogCard = ({ post, onReadMore, onStart, index = 0 }: BlogCardProps) => {
       </div>
 
       {/* Actions */}
-      <div className="px-5 pb-5 flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 text-xs border-border/50 hover:border-primary/50 hover:text-primary transition-colors"
-          onClick={() => onReadMore(post)}
-        >
-          Читать далее
-          <ArrowRight className="w-3.5 h-3.5 ml-1" />
-        </Button>
+      <div className="px-5 pb-5">
         <Button
           size="sm"
-          className="flex-1 text-xs gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform"
-          onClick={onStart}
+          className="w-full text-xs gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform"
+          onClick={(e) => { e.stopPropagation(); onStart(); }}
         >
           <Sparkles className="w-3.5 h-3.5 mr-1" />
           Начать

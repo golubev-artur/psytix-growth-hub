@@ -3,18 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Brain, TrendingUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { blogPosts } from '@/data/blogData';
-import type { BlogPost } from '@/data/blogData';
 import BlogCard from './BlogCard';
-import BlogPostModal from './BlogPostModal';
 
 type Tab = 'psychology' | 'sales';
 
 const BlogSection = () => {
   const [activeTab, setActiveTab] = useState<Tab>('psychology');
   const [search, setSearch] = useState('');
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [showStartForm, setShowStartForm] = useState(false);
 
   const filtered = useMemo(() => {
     const byCategory = blogPosts.filter((p) => p.category === activeTab);
@@ -26,25 +21,6 @@ const BlogSection = () => {
         p.excerpt.toLowerCase().includes(q)
     );
   }, [activeTab, search]);
-
-  const handleReadMore = (post: BlogPost) => {
-    setSelectedPost(post);
-    setShowStartForm(false);
-    setModalOpen(true);
-  };
-
-  const handleStart = () => {
-    // Open modal to first post of the current tab with form shown
-    const first = blogPosts.find((p) => p.category === activeTab) ?? null;
-    setSelectedPost(first);
-    setShowStartForm(true);
-    setModalOpen(true);
-  };
-
-  const handleOpenPost = (post: BlogPost) => {
-    setSelectedPost(post);
-    setShowStartForm(false);
-  };
 
   return (
     <section id="blog" className="py-20 relative overflow-hidden">
@@ -131,8 +107,7 @@ const BlogSection = () => {
                     key={post.id}
                     post={post}
                     index={i}
-                    onReadMore={handleReadMore}
-                    onStart={handleStart}
+                    onStart={() => {}}
                   />
                 ))}
               </div>
@@ -146,13 +121,6 @@ const BlogSection = () => {
         </AnimatePresence>
       </div>
 
-      {/* Modal */}
-      <BlogPostModal
-        post={selectedPost}
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onOpenPost={handleOpenPost}
-      />
     </section>
   );
 };
