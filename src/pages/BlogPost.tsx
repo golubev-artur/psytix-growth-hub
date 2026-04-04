@@ -181,6 +181,42 @@ const BlogPostPage = () => {
         <meta name="description" content={post.excerpt} />
         <meta property="og:title" content={`${post.title} — Psytix`} />
         <meta property="og:description" content={post.excerpt} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://psytix.ru/blog/${post.id}`} />
+        <meta property="og:image" content="https://psytix.ru/og-image.svg" />
+        <meta property="og:site_name" content="Psytix" />
+        <meta property="article:published_time" content={post.date} />
+        <link rel="canonical" href={`https://psytix.ru/blog/${post.id}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": post.title,
+          "description": post.excerpt,
+          "datePublished": post.date,
+          "url": `https://psytix.ru/blog/${post.id}`,
+          "image": "https://psytix.ru/og-image.svg",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Psytix",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://psytix.ru/favicon.svg"
+            }
+          },
+          "author": {
+            "@type": "Organization",
+            "name": "Psytix"
+          }
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://psytix.ru" },
+            { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://psytix.ru/blog" },
+            { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://psytix.ru/blog/${post.id}` }
+          ]
+        })}</script>
       </Helmet>
       <div className="min-h-screen bg-background">
         <Navbar />

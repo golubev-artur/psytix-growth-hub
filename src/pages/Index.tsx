@@ -21,12 +21,32 @@ const Index = () => {
         <meta property="og:description" content="16 модулей с научной базой. Когнитивные искажения, эмоциональный интеллект, SPIN-продажи, переговоры и многое другое." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://psytix.ru" />
-        <meta property="og:image" content="https://psytix.ru/og-image.png" />
+        <meta property="og:image" content="https://psytix.ru/og-image.svg" />
         <meta property="og:site_name" content="Psytix" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Psytix — Психология и продажи в одной системе" />
         <meta name="twitter:description" content="16 модулей с научной базой для роста в психологии и продажах." />
         <link rel="canonical" href="https://psytix.ru" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Psytix",
+          "url": "https://psytix.ru",
+          "logo": "https://psytix.ru/favicon.svg",
+          "description": "Образовательная платформа по психологии и продажам. 16 научных модулей с реальными метриками и практическими инструментами.",
+          "sameAs": [],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "availableLanguage": "Russian"
+          }
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Psytix",
+          "url": "https://psytix.ru"
+        })}</script>
       </Helmet>
       <Navbar />
       <Hero />

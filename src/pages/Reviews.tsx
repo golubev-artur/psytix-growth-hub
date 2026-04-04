@@ -11,6 +11,13 @@ const Reviews = () => {
       <Helmet>
         <title>Отзывы — Psytix</title>
         <meta name="description" content="Отзывы студентов платформы Psytix. Реальные результаты обучения психологии и продажам." />
+        <meta property="og:title" content="Отзывы — Psytix" />
+        <meta property="og:description" content="Отзывы студентов платформы Psytix. Реальные результаты обучения психологии и продажам." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://psytix.ru/reviews" />
+        <meta property="og:image" content="https://psytix.ru/og-image.svg" />
+        <meta property="og:site_name" content="Psytix" />
+        <link rel="canonical" href="https://psytix.ru/reviews" />
       </Helmet>
       <div className="min-h-screen bg-background">
         <Navbar />
