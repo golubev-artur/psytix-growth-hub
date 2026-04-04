@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from 'recharts';
 import type { BlogPost } from '@/data/blogData';
+import { getPostUrl } from '@/data/blogData';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -80,7 +81,7 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
       transition={{ duration: 0.5, delay: index * 0.07 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
       className="glass-card rounded-2xl overflow-hidden flex flex-col h-full group cursor-pointer"
-      onClick={() => navigate(`/blog/${post.id}`)}
+      onClick={() => navigate(getPostUrl(post))}
     >
       {/* Category badge */}
       <div className="px-5 pt-5">

@@ -18,7 +18,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { blogPosts, getRelatedPosts } from '@/data/blogData';
+import { blogPosts, getRelatedPosts, getPostUrl } from '@/data/blogData';
 import type { BlogPost as BlogPostType } from '@/data/blogData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -143,11 +143,13 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
 };
 
 const BlogPostPage = () => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
 
-  const post = blogPosts.find((p) => p.id === id);
+  const post = slug
+    ? blogPosts.find((p) => p.slug === slug)
+    : blogPosts.find((p) => p.id === id);
 
   if (!post) {
     return (
@@ -182,18 +184,18 @@ const BlogPostPage = () => {
         <meta property="og:title" content={`${post.title} — Psytix`} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://psytix.ru/blog/${post.id}`} />
+        <meta property="og:url" content={`https://psytix.ru${getPostUrl(post)}`} />
         <meta property="og:image" content="https://psytix.ru/og-image.svg" />
         <meta property="og:site_name" content="Psytix" />
         <meta property="article:published_time" content={post.date} />
-        <link rel="canonical" href={`https://psytix.ru/blog/${post.id}`} />
+        <link rel="canonical" href={`https://psytix.ru${getPostUrl(post)}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
           "headline": post.title,
           "description": post.excerpt,
           "datePublished": post.date,
-          "url": `https://psytix.ru/blog/${post.id}`,
+          "url": `https://psytix.ru${getPostUrl(post)}`,
           "image": "https://psytix.ru/og-image.svg",
           "publisher": {
             "@type": "Organization",
@@ -214,7 +216,7 @@ const BlogPostPage = () => {
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://psytix.ru" },
             { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://psytix.ru/blog" },
-            { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://psytix.ru/blog/${post.id}` }
+            { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://psytix.ru${getPostUrl(post)}` }
           ]
         })}</script>
       </Helmet>
@@ -270,7 +272,7 @@ const BlogPostPage = () => {
                 {relatedPosts.map((related) => {
                   const isRelPsy = related.category === 'psychology';
                   return (
-                    <Link key={related.id} to={`/blog/${related.id}`} className="text-left p-3 rounded-xl border border-border/40 bg-background/20 hover:border-primary/40 hover:bg-primary/5 transition-all group">
+                    <Link key={related.id} to={getPostUrl(related)} className="text-left p-3 rounded-xl border border-border/40 bg-background/20 hover:border-primary/40 hover:bg-primary/5 transition-all group">
                       <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mb-1.5 ${isRelPsy ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`}>
                         {isRelPsy ? 'Психология' : 'Продажи'}
                       </span>
