@@ -10,6 +10,8 @@ import ModulePage from "./pages/ModulePage";
 import Reviews from "./pages/Reviews";
 import BlogPostPage from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookieBanner from "./components/psytix/CookieBanner";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <CookieBanner />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/blog" element={<Blog />} />
@@ -30,6 +33,7 @@ const App = () => (
           <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/module/:id" element={<ModulePage />} />
           <Route path="/reviews" element={<Reviews />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
