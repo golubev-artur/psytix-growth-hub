@@ -57,24 +57,28 @@ const BlogSection = () => {
           <div className="flex items-center glass-card rounded-xl p-1 gap-1 self-start">
             <button
               onClick={() => { setActiveTab('psychology'); setSearch(''); }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
                 activeTab === 'psychology'
-                  ? 'bg-purple-500/20 text-purple-300 shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-purple-600/50 text-purple-100 border border-purple-500/60 shadow-[0_0_12px_rgba(147,51,234,0.4)]'
+                  : 'text-slate-500 hover:text-purple-300 hover:bg-purple-500/10'
               }`}
             >
-              <Brain className="w-4 h-4" />
+              <Brain className={`w-5 h-5 transition-colors duration-200 ${
+                activeTab === 'psychology' ? 'text-white' : 'text-slate-500'
+              }`} />
               Психология
             </button>
             <button
               onClick={() => { setActiveTab('sales'); setSearch(''); }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
                 activeTab === 'sales'
-                  ? 'bg-blue-500/20 text-blue-300 shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-blue-600/50 text-blue-100 border border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.4)]'
+                  : 'text-slate-500 hover:text-blue-300 hover:bg-blue-500/10'
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className={`w-5 h-5 transition-colors duration-200 ${
+                activeTab === 'sales' ? 'text-white' : 'text-slate-500'
+              }`} />
               Продажи
             </button>
           </div>

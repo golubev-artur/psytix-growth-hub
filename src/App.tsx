@@ -12,6 +12,7 @@ import BlogPostPage from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookieBanner from "./components/psytix/CookieBanner";
+import AIChatAssistant from "./components/psytix/AIChatAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <CookieBanner />
+        <AIChatAssistant />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/blog" element={<Blog />} />

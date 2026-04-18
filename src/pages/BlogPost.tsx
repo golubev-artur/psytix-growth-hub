@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, BookOpen, Send, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
+import { Calendar, Clock, BookOpen, Send, CheckCircle2, ArrowLeft, Sparkles, Brain, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   ResponsiveContainer,
@@ -171,8 +171,8 @@ const BlogPostPage = () => {
   const relatedPosts = getRelatedPosts(post.relatedIds);
   const isPsy = post.category === 'psychology';
   const badgeClass = isPsy
-    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
+    ? 'bg-purple-600/40 text-purple-100 border border-purple-500/70 font-bold shadow-[0_0_8px_rgba(147,51,234,0.3)]'
+    : 'bg-blue-600/40 text-blue-100 border border-blue-500/70 font-bold shadow-[0_0_8px_rgba(59,130,246,0.3)]';
 
   const formattedDate = new Date(post.date).toLocaleDateString('ru-RU', {
     day: 'numeric',
@@ -237,7 +237,8 @@ const BlogPostPage = () => {
 
           {/* Badge + Title */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full mb-3 ${badgeClass}`}>
+            <span className={`inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full mb-3 ${badgeClass}`}>
+              {isPsy ? <Brain className="w-3.5 h-3.5" /> : <TrendingUp className="w-3.5 h-3.5" />}
               {isPsy ? 'Психология' : 'Продажи'}
             </span>
             <h1 className="text-3xl font-bold text-foreground leading-tight mb-4">{post.title}</h1>
@@ -277,7 +278,8 @@ const BlogPostPage = () => {
                   const isRelPsy = related.category === 'psychology';
                   return (
                     <Link key={related.id} to={getPostUrl(related)} className="text-left p-3 rounded-xl border border-border/40 bg-background/20 hover:border-primary/40 hover:bg-primary/5 transition-all group">
-                      <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mb-1.5 ${isRelPsy ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`}>
+                      <span className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full mb-1.5 ${isRelPsy ? 'bg-purple-600/40 text-purple-100 border border-purple-500/70 font-bold' : 'bg-blue-600/40 text-blue-100 border border-blue-500/70 font-bold'}`}>
+                        {isRelPsy ? <Brain className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
                         {isRelPsy ? 'Психология' : 'Продажи'}
                       </span>
                       <p className="text-xs text-foreground font-medium leading-snug group-hover:text-primary transition-colors line-clamp-2">{related.title}</p>

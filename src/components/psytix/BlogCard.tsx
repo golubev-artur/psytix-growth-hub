@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Sparkles } from 'lucide-react';
+import { Calendar, Clock, Brain, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -73,8 +73,9 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
   const navigate = useNavigate();
   const isPsy = post.category === 'psychology';
   const badgeClass = isPsy
-    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
+    ? 'bg-purple-600/40 text-purple-100 border border-purple-500/70 font-bold shadow-[0_0_8px_rgba(147,51,234,0.3)]'
+    : 'bg-blue-600/40 text-blue-100 border border-blue-500/70 font-bold shadow-[0_0_8px_rgba(59,130,246,0.3)]';
+  const BadgeIcon = isPsy ? Brain : TrendingUp;
   const badgeLabel = isPsy ? 'Психология' : 'Продажи';
 
   const formattedDate = new Date(post.date).toLocaleDateString('ru-RU', {
@@ -95,7 +96,8 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
     >
       {/* Category badge */}
       <div className="px-5 pt-5">
-        <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${badgeClass}`}>
+        <span className={`inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full ${badgeClass}`}>
+          <BadgeIcon className="w-3.5 h-3.5" />
           {badgeLabel}
         </span>
       </div>
@@ -132,10 +134,9 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
         <Button
           size="sm"
           className="w-full text-xs gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform"
-          onClick={(e) => { e.stopPropagation(); onStart(); }}
+          onClick={(e) => { e.stopPropagation(); navigate(getPostUrl(post)); }}
         >
-          <Sparkles className="w-3.5 h-3.5 mr-1" />
-          Начать
+          Читать
         </Button>
       </div>
     </motion.div>
