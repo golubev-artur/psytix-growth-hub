@@ -25,37 +25,47 @@ interface BlogCardProps {
 const MiniChart = ({ post }: { post: BlogPost }) => {
   const firstKey = Object.keys(post.chartData[0]).find((k) => k !== 'name') ?? 'value';
   const color = post.category === 'psychology' ? '#7C3AED' : '#3B82F6';
+  const tooltipStyle = {
+    contentStyle: { background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 },
+    labelStyle: { color: '#a78bfa' },
+  };
 
   if (post.chartType === 'bar') {
     return (
-      <BarChart data={post.chartData}>
-        <XAxis dataKey="name" hide />
-        <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
-        <Bar dataKey={firstKey} fill={color} radius={[3, 3, 0, 0]} />
-      </BarChart>
+      <ResponsiveContainer width="100%" height={110}>
+        <BarChart data={post.chartData}>
+          <XAxis dataKey="name" hide />
+          <Tooltip {...tooltipStyle} />
+          <Bar dataKey={firstKey} fill={color} radius={[3, 3, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
     );
   }
   if (post.chartType === 'line') {
     return (
-      <LineChart data={post.chartData}>
-        <XAxis dataKey="name" hide />
-        <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
-        <Line type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} dot={false} />
-      </LineChart>
+      <ResponsiveContainer width="100%" height={110}>
+        <LineChart data={post.chartData}>
+          <XAxis dataKey="name" hide />
+          <Tooltip {...tooltipStyle} />
+          <Line type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} dot={false} />
+        </LineChart>
+      </ResponsiveContainer>
     );
   }
   return (
-    <AreaChart data={post.chartData}>
-      <XAxis dataKey="name" hide />
-      <Tooltip contentStyle={{ background: 'rgba(15,15,30,0.9)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: 8, fontSize: 11 }} labelStyle={{ color: '#a78bfa' }} />
-      <defs>
-        <linearGradient id={`grad-${post.id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor={color} stopOpacity={0.4} />
-          <stop offset="95%" stopColor={color} stopOpacity={0.0} />
-        </linearGradient>
-      </defs>
-      <Area type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} fill={`url(#grad-${post.id})`} />
-    </AreaChart>
+    <ResponsiveContainer width="100%" height={110}>
+      <AreaChart data={post.chartData}>
+        <XAxis dataKey="name" hide />
+        <Tooltip {...tooltipStyle} />
+        <defs>
+          <linearGradient id={`grad-${post.id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={color} stopOpacity={0.4} />
+            <stop offset="95%" stopColor={color} stopOpacity={0.0} />
+          </linearGradient>
+        </defs>
+        <Area type="monotone" dataKey={firstKey} stroke={color} strokeWidth={2} fill={`url(#grad-${post.id})`} />
+      </AreaChart>
+    </ResponsiveContainer>
   );
 };
 
@@ -102,9 +112,7 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
 
       {/* Mini chart */}
       <div className="mx-5 mb-3 rounded-xl overflow-hidden bg-background/30 border border-border/30">
-        <ResponsiveContainer width="100%" height={110}>
-          <MiniChart post={post} />
-        </ResponsiveContainer>
+        <MiniChart post={post} />
       </div>
 
       {/* Meta */}

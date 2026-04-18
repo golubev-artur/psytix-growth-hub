@@ -42,51 +42,57 @@ const FullChart = ({ post }: { post: BlogPostType }) => {
 
   if (post.chartType === 'bar') {
     return (
-      <BarChart data={post.chartData}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-        <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-        <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-        <Tooltip {...tooltipStyle} />
-        {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
-        {keys.map((key, i) => (
-          <Bar key={key} dataKey={key} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[4, 4, 0, 0]} />
-        ))}
-      </BarChart>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={post.chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+          <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <Tooltip {...tooltipStyle} />
+          {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
+          {keys.map((key, i) => (
+            <Bar key={key} dataKey={key} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[4, 4, 0, 0]} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
     );
   }
   if (post.chartType === 'line') {
     return (
-      <LineChart data={post.chartData}>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={post.chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+          <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <Tooltip {...tooltipStyle} />
+          {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
+          {keys.map((key, i) => (
+            <Line key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} dot={{ r: 4, fill: CHART_COLORS[i % CHART_COLORS.length] }} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart data={post.chartData}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
         <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
         <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
         <Tooltip {...tooltipStyle} />
         {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
+        <defs>
+          {keys.map((key, i) => (
+            <linearGradient key={key} id={`fullgrad-${key}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.5} />
+              <stop offset="95%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.0} />
+            </linearGradient>
+          ))}
+        </defs>
         {keys.map((key, i) => (
-          <Line key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} dot={{ r: 4, fill: CHART_COLORS[i % CHART_COLORS.length] }} />
+          <Area key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} fill={`url(#fullgrad-${key})`} />
         ))}
-      </LineChart>
-    );
-  }
-  return (
-    <AreaChart data={post.chartData}>
-      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-      <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-      <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-      <Tooltip {...tooltipStyle} />
-      {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
-      <defs>
-        {keys.map((key, i) => (
-          <linearGradient key={key} id={`fullgrad-${key}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.5} />
-            <stop offset="95%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.0} />
-          </linearGradient>
-        ))}
-      </defs>
-      {keys.map((key, i) => (
-        <Area key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} fill={`url(#fullgrad-${key})`} />
-      ))}
-    </AreaChart>
+      </AreaChart>
+    </ResponsiveContainer>
   );
 };
 
@@ -249,9 +255,7 @@ const BlogPostPage = () => {
           {/* Chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-xl overflow-hidden bg-background/30 border border-border/30 p-4 mb-8">
             <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">{post.chartTitle}</p>
-            <ResponsiveContainer width="100%" height={300}>
-              <FullChart post={post} />
-            </ResponsiveContainer>
+            <FullChart post={post} />
           </motion.div>
 
           {/* Content */}
