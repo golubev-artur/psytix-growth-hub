@@ -12,7 +12,7 @@ interface LeadData {
   recommendations?: string;
 }
 
-export async function sendLeadToTelegram(data: LeadData): Promise<void> {
+export function sendLeadToTelegram(data: LeadData): void {
   const now = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" });
 
   const lines = [
@@ -32,17 +32,14 @@ export async function sendLeadToTelegram(data: LeadData): Promise<void> {
 
   lines.push("", `⏰ ${now}`);
 
-  try {
-    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: TG_CHAT_ID,
-        text: lines.join("\n"),
-        parse_mode: "HTML",
-      }),
-    });
-  } catch {
-    // не блокируем форму если TG недоступен
-  }
+  // fire-and-forget — не блокируем UI
+  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TG_CHAT_ID,
+      text: lines.join("\n"),
+      parse_mode: "HTML",
+    }),
+  }).catch(() => {});
 }

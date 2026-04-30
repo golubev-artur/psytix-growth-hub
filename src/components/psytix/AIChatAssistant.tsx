@@ -119,22 +119,17 @@ const LeadFormInChat = ({ defaultInterest, onSuccess }: { defaultInterest: strin
   const [form, setForm] = useState({ name: "", email: "", interest: defaultInterest });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await sendLeadToTelegram({
-        name: form.name,
-        email: form.email,
-        interest: form.interest,
-        page: window.location.href,
-        button: "AI-чат → Оставить заявку",
-      });
-    } finally {
-      setLoading(false);
-      toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
-      onSuccess();
-    }
+    sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      interest: form.interest,
+      page: window.location.href,
+      button: "AI-чат → Оставить заявку",
+    });
+    toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
+    onSuccess();
   };
 
   return (

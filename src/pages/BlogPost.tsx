@@ -100,24 +100,18 @@ const FullChart = ({ post }: { post: BlogPostType }) => {
 const LeadForm = ({ postTitle }: { postTitle: string }) => {
   const [form, setForm] = useState({ name: '', email: '', interest: '' });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await sendLeadToTelegram({
-        name: form.name,
-        email: form.email,
-        interest: form.interest,
-        page: window.location.href,
-        button: `Начать обучение — статья «${postTitle}»`,
-      });
-    } finally {
-      setLoading(false);
-      setSubmitted(true);
-      toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
-    }
+    sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      interest: form.interest,
+      page: window.location.href,
+      button: `Начать обучение — статья «${postTitle}»`,
+    });
+    setSubmitted(true);
+    toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
   };
 
   if (submitted) {
@@ -146,8 +140,8 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
         <label className="block text-xs text-muted-foreground mb-1">Что вас интересует больше всего?</label>
         <Textarea rows={3} placeholder="Расскажите о вашей ситуации и задачах..." value={form.interest} onChange={(e) => setForm({ ...form, interest: e.target.value })} className="bg-background/50 border-border/50 focus:border-primary/50 resize-none" />
       </div>
-      <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform">
-        {loading ? 'Отправляем...' : (<><Send className="w-4 h-4 mr-2" />Начать обучение</>)}
+      <Button type="submit" className="w-full gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform">
+        <Send className="w-4 h-4 mr-2" />Начать обучение
       </Button>
     </motion.form>
   );

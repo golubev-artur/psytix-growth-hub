@@ -118,24 +118,18 @@ const FullChart = ({ post }: { post: BlogPost }) => {
 const LeadForm = ({ postTitle }: { postTitle: string }) => {
   const [form, setForm] = useState({ name: '', email: '', interest: '' });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await sendLeadToTelegram({
-        name: form.name,
-        email: form.email,
-        interest: form.interest,
-        page: window.location.href,
-        button: `Начать обучение — модальное окно статьи «${postTitle}»`,
-      });
-    } finally {
-      setLoading(false);
-      setSubmitted(true);
-      toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
-    }
+    sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      interest: form.interest,
+      page: window.location.href,
+      button: `Начать обучение — модальное окно статьи «${postTitle}»`,
+    });
+    setSubmitted(true);
+    toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
   };
 
   if (submitted) {
@@ -196,13 +190,9 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
       </div>
       <Button
         type="submit"
-        disabled={loading}
         className="w-full gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform"
       >
-        {loading ? (
-          'Отправляем...'
-        ) : (
-          <>
+        <>
             <Send className="w-4 h-4 mr-2" />
             Начать обучение
           </>

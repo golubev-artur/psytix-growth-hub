@@ -49,34 +49,24 @@ const QuizTest = () => {
     setForm({ name: "", email: "" });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     const summary = getQuizSummary();
     const recs = getRecommendations();
 
-    const quizBlock = summary
-      .map((s, i) => `   ${i + 1}. ${s.question}\n      → ${s.answer}`)
-      .join("\n");
+    sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      page: window.location.href,
+      button: "Квиз → Начать обучение",
+      quizAnswers: summary.map((s, i) => `   ${i + 1}. ${s.question}\n      → ${s.answer}`).join("\n"),
+      recommendations: recs.map((r) => `   • ${r.title}`).join("\n"),
+    });
 
-    const recsBlock = recs.map((r) => `   • ${r.title}`).join("\n");
-
-    try {
-      await sendLeadToTelegram({
-        name: form.name,
-        email: form.email,
-        page: window.location.href,
-        button: "Квиз → Начать обучение",
-        quizAnswers: quizBlock,
-        recommendations: recsBlock,
-      });
-    } finally {
-      setLoading(false);
-      setSubmitted(true);
-      setShowForm(false);
-      toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
-    }
+    setSubmitted(true);
+    setShowForm(false);
+    toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
   };
 
   const progress = ((currentQuestion + (isComplete ? 1 : 0)) / quizQuestions.length) * 100;

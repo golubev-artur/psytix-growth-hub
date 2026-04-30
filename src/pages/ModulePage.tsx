@@ -42,20 +42,17 @@ const ModulePage = () => {
 
   const Icon = course.icon;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await sendLeadToTelegram({
-        name: formData.name,
-        email: formData.email,
-        comment: formData.comment,
-        page: window.location.href,
-        button: `Начать обучение — ${course?.title ?? id}`,
-      });
-    } finally {
-      setSubmitted(true);
-      setFormOpen(false);
-    }
+    sendLeadToTelegram({
+      name: formData.name,
+      email: formData.email,
+      comment: formData.comment,
+      page: window.location.href,
+      button: `Начать обучение — ${course?.title ?? id}`,
+    });
+    setSubmitted(true);
+    setFormOpen(false);
   };
 
   const categoryLabel = course.category === "psychology" ? "Психология" : "Продажи";
