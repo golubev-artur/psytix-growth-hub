@@ -32,14 +32,9 @@ export function sendLeadToTelegram(data: LeadData): void {
 
   lines.push("", `⏰ ${now}`);
 
-  // fire-and-forget — не блокируем UI
-  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: TG_CHAT_ID,
-      text: lines.join("\n"),
-      parse_mode: "HTML",
-    }),
-  }).catch(() => {});
+  const text = lines.join("\n");
+  const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${encodeURIComponent(TG_CHAT_ID)}&text=${encodeURIComponent(text)}&parse_mode=HTML`;
+
+  // GET-запрос — не требует CORS preflight, fire-and-forget
+  fetch(url, { mode: "no-cors" }).catch(() => {});
 }
