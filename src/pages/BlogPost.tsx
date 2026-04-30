@@ -105,16 +105,19 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
-      interest: form.interest,
-      page: window.location.href,
-      button: `Начать обучение — статья «${postTitle}»`,
-    });
-    setLoading(false);
-    setSubmitted(true);
-    toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
+    try {
+      await sendLeadToTelegram({
+        name: form.name,
+        email: form.email,
+        interest: form.interest,
+        page: window.location.href,
+        button: `Начать обучение — статья «${postTitle}»`,
+      });
+    } finally {
+      setLoading(false);
+      setSubmitted(true);
+      toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
+    }
   };
 
   if (submitted) {
