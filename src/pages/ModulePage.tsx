@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { sendLeadToTelegram } from "@/lib/telegram";
 import { motion } from "framer-motion";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -21,7 +22,7 @@ const ModulePage = () => {
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", phone: "", email: "", comment: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
 
   const allCourses = [...psychologyBlocks, ...salesBlocks];
@@ -41,8 +42,15 @@ const ModulePage = () => {
 
   const Icon = course.icon;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await sendLeadToTelegram({
+      name: formData.name,
+      email: formData.email,
+      comment: formData.comment,
+      page: window.location.href,
+      button: `Начать обучение — ${course?.title ?? id}`,
+    });
     setSubmitted(true);
     setFormOpen(false);
   };
@@ -146,13 +154,6 @@ const ModulePage = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-              <Input
-                placeholder="Телефон *"
-                required
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
               <Input
                 placeholder="Email *"

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { sendLeadToTelegram } from '@/lib/telegram';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -97,15 +98,20 @@ const FullChart = ({ post }: { post: BlogPostType }) => {
 };
 
 const LeadForm = ({ postTitle }: { postTitle: string }) => {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', interest: '' });
+  const [form, setForm] = useState({ name: '', email: '', interest: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    console.log('Blog lead form submission:', { ...form, sourcePost: postTitle });
+    await sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      interest: form.interest,
+      page: window.location.href,
+      button: `Начать обучение — статья «${postTitle}»`,
+    });
     setLoading(false);
     setSubmitted(true);
     toast.success('Заявка отправлена! Мы свяжемся с вами в течение 24 часов.');
@@ -132,10 +138,6 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
           <label className="block text-xs text-muted-foreground mb-1">Email *</label>
           <Input required type="email" placeholder="your@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="bg-background/50 border-border/50 focus:border-primary/50" />
         </div>
-      </div>
-      <div>
-        <label className="block text-xs text-muted-foreground mb-1">Телефон</label>
-        <Input type="tel" placeholder="+7 (999) 000-00-00" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="bg-background/50 border-border/50 focus:border-primary/50" />
       </div>
       <div>
         <label className="block text-xs text-muted-foreground mb-1">Что вас интересует больше всего?</label>

@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { psychologyBlocks, salesBlocks } from "@/data/courses";
 import { blogPosts } from "@/data/blogData";
+import { sendLeadToTelegram } from "@/lib/telegram";
 
 interface Message {
   id: number;
@@ -115,14 +116,20 @@ const findResponse = (input: string, topic: string): string => {
 
 // ─── Форма заявки ─────────────────────────────────────────────────────────────
 const LeadFormInChat = ({ defaultInterest, onSuccess }: { defaultInterest: string; onSuccess: () => void }) => {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", interest: defaultInterest });
+  const [form, setForm] = useState({ name: "", email: "", interest: defaultInterest });
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    console.log("Chat lead form:", form);
+    await sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      interest: form.interest,
+      page: window.location.href,
+      button: "AI-чат → Оставить заявку",
+    });
     setLoading(false);
     toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
     onSuccess();
@@ -148,13 +155,6 @@ const LeadFormInChat = ({ defaultInterest, onSuccess }: { defaultInterest: strin
         placeholder="Email *"
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
-        className="text-sm bg-background/60 border-border/50"
-      />
-      <Input
-        type="tel"
-        placeholder="Телефон"
-        value={form.phone}
-        onChange={(e) => setForm({ ...form, phone: e.target.value })}
         className="text-sm bg-background/60 border-border/50"
       />
       <Textarea
