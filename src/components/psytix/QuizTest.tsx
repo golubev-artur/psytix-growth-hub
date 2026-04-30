@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ArrowRight, RotateCcw, Sparkles } from "lucide-react";
+import { CheckCircle2, ArrowRight, RotateCcw, Sparkles, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { quizQuestions, psychologyBlocks, salesBlocks } from "@/data/courses";
+import { sendLeadToTelegram } from "@/lib/telegram";
 
 const QuizTest = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [isComplete, setIsComplete] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleAnswer = (optionIndex: number) => {
     const newAnswers = [...answers, optionIndex];
@@ -27,13 +34,54 @@ const QuizTest = () => {
     return [...psychologyBlocks.slice(0, 2), salesBlocks[0]];
   };
 
+  const getQuizSummary = () =>
+    quizQuestions.map((q, i) => ({
+      question: q.question,
+      answer: answers[i] !== undefined ? q.options[answers[i]].text : "—",
+    }));
+
   const restart = () => {
     setCurrentQuestion(0);
     setAnswers([]);
     setIsComplete(false);
+    setShowForm(false);
+    setSubmitted(false);
+    setForm({ name: "", email: "" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const summary = getQuizSummary();
+    const recs = getRecommendations();
+
+    const quizBlock = summary
+      .map((s, i) => `   ${i + 1}. ${s.question}\n      → ${s.answer}`)
+      .join("\n");
+
+    const recsBlock = recs.map((r) => `   • ${r.title}`).join("\n");
+
+    try {
+      await sendLeadToTelegram({
+        name: form.name,
+        email: form.email,
+        page: window.location.href,
+        button: "Квиз → Начать обучение",
+        quizAnswers: quizBlock,
+        recommendations: recsBlock,
+      });
+    } finally {
+      setLoading(false);
+      setSubmitted(true);
+      setShowForm(false);
+      toast.success("Заявка отправлена! Свяжемся с вами в течение 24 часов.");
+    }
   };
 
   const progress = ((currentQuestion + (isComplete ? 1 : 0)) / quizQuestions.length) * 100;
+  const recommendations = isComplete ? getRecommendations() : [];
+  const quizSummary = isComplete ? getQuizSummary() : [];
 
   return (
     <section id="quiz" className="py-20">
@@ -114,15 +162,15 @@ const QuizTest = () => {
                       <Sparkles className="w-8 h-8 text-primary-foreground" />
                     </div>
                     <h3 className="text-xl font-bold text-foreground mb-2">
-                      Ваша персональная траектория готова!
+                      {submitted ? "Заявка отправлена!" : "Ваша персональная траектория готова!"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Рекомендуем начать с этих модулей:
+                      {submitted ? "Мы свяжемся с вами в течение 24 часов" : "Рекомендуем начать с этих модулей:"}
                     </p>
                   </div>
 
                   <div className="space-y-3 mb-6">
-                    {getRecommendations().map((block, i) => {
+                    {recommendations.map((block) => {
                       const Icon = block.icon;
                       return (
                         <div
@@ -142,26 +190,104 @@ const QuizTest = () => {
                     })}
                   </div>
 
-                  <div className="flex gap-3">
-                    <Button
-                      className="flex-1 gradient-primary text-primary-foreground py-5 rounded-xl shadow-glow-sm hover:scale-[1.02] transition-transform"
-                    >
-                      Начать обучение
+                  {!submitted && (
+                    <div className="flex gap-3">
+                      <Button
+                        className="flex-1 gradient-primary text-primary-foreground py-5 rounded-xl shadow-glow-sm hover:scale-[1.02] transition-transform"
+                        onClick={() => setShowForm(true)}
+                      >
+                        Начать обучение
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={restart}
+                        className="px-4 py-5 rounded-xl"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+
+                  {submitted && (
+                    <Button variant="outline" onClick={restart} className="w-full rounded-xl">
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Пройти квиз заново
                     </Button>
-                    <Button
-                      variant="outline"
-                      onClick={restart}
-                      className="px-4 py-5 rounded-xl"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
         </div>
       </div>
+
+      {/* Форма после квиза */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowForm(false); }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card rounded-2xl p-8 w-full max-w-md relative"
+            >
+              <button
+                onClick={() => setShowForm(false)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h3 className="text-2xl font-bold mb-1">Начать обучение</h3>
+              <p className="text-muted-foreground text-sm mb-5">
+                Персональный план на основе ваших ответов
+              </p>
+
+              {/* Ответы квиза */}
+              <div className="bg-secondary/50 rounded-xl p-4 mb-5 space-y-2">
+                {quizSummary.map((s, i) => (
+                  <div key={i} className="text-sm">
+                    <span className="text-muted-foreground">{s.question}</span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-psytix-success flex-shrink-0" />
+                      <span className="font-medium text-foreground">{s.answer}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <Input
+                  required
+                  placeholder="Ваше имя *"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+                <Input
+                  required
+                  type="email"
+                  placeholder="Email *"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full gradient-primary text-primary-foreground py-5 rounded-xl shadow-glow-sm"
+                >
+                  {loading ? "Отправляем..." : <><Send className="w-4 h-4 mr-2" />Отправить заявку</>}
+                </Button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

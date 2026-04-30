@@ -8,6 +8,8 @@ interface LeadData {
   comment?: string;
   page: string;
   button: string;
+  quizAnswers?: string;
+  recommendations?: string;
 }
 
 export async function sendLeadToTelegram(data: LeadData): Promise<void> {
@@ -25,6 +27,8 @@ export async function sendLeadToTelegram(data: LeadData): Promise<void> {
 
   if (data.interest) lines.push(`💬 <b>Интерес:</b> ${data.interest}`);
   if (data.comment) lines.push(`📝 <b>Комментарий:</b> ${data.comment}`);
+  if (data.quizAnswers) lines.push("", `📋 <b>Ответы квиза:</b>\n${data.quizAnswers}`);
+  if (data.recommendations) lines.push("", `🎯 <b>Рекомендованные модули:</b>\n${data.recommendations}`);
 
   lines.push("", `⏰ ${now}`);
 
