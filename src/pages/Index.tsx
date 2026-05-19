@@ -3,6 +3,7 @@ import Hero from "@/components/psytix/Hero";
 import MissionBlock from "@/components/psytix/MissionBlock";
 import CourseSection from "@/components/psytix/CourseSection";
 import VideoPreview from "@/components/psytix/VideoPreview";
+import PromoVideo from "@/components/psytix/PromoVideo";
 import QuizTest from "@/components/psytix/QuizTest";
 import ValueCalculator from "@/components/psytix/ValueCalculator";
 import TestimonialPopup from "@/components/psytix/TestimonialPopup";
@@ -49,6 +50,7 @@ const Index = () => {
       </Helmet>
       <Navbar />
       <Hero />
+      <PromoVideo />
       <MissionBlock />
 
       <CourseSection
