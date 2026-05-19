@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -17,6 +17,9 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === "/";
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -45,6 +48,11 @@ const Navbar = () => {
         scrolled || !isHome ? "glass-card shadow-sm" : "bg-transparent"
       }`}
     >
+      {/* Scroll progress bar */}
+      <motion.div
+        className="scroll-progress"
+        style={{ scaleX, width: "100%" }}
+      />
       <div className="container mx-auto px-6 flex items-center justify-between h-16">
         <Link to="/" className="text-xl font-bold gradient-text flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />

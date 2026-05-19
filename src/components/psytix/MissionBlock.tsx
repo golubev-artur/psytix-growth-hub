@@ -45,7 +45,7 @@ const MissionBlock = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
-              className="glass-card rounded-2xl p-8 text-center card-3d"
+              className="glass-card rounded-2xl p-8 text-center card-3d shine gradient-border"
             >
               <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mx-auto mb-5">
                 <item.icon className="w-7 h-7 text-primary-foreground" />

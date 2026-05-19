@@ -22,7 +22,7 @@ const CourseCard = ({ course, index }: CourseCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="glass-card rounded-2xl overflow-hidden card-3d group cursor-pointer"
+      className="glass-card rounded-2xl overflow-hidden card-3d group cursor-pointer shine gradient-border"
       onClick={() => navigate(`/module/${course.id}`)}
     >
       <div className="p-6">
