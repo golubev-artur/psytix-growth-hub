@@ -1,18 +1,23 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Brain, TrendingUp } from 'lucide-react';
+import { Search, Brain, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { blogPosts } from '@/data/blogData';
 import BlogCard from './BlogCard';
+
+const POSTS_PER_PAGE = 9;
 
 type Tab = 'psychology' | 'sales';
 
 const BlogSection = () => {
   const [activeTab, setActiveTab] = useState<Tab>('psychology');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
-    const byCategory = blogPosts.filter((p) => p.category === activeTab);
+    const byCategory = blogPosts
+      .filter((p) => p.category === activeTab)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     if (!search.trim()) return byCategory;
     const q = search.toLowerCase();
     return byCategory.filter(
@@ -21,6 +26,9 @@ const BlogSection = () => {
         p.excerpt.toLowerCase().includes(q)
     );
   }, [activeTab, search]);
+
+  const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE);
+  const paged = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   return (
     <section id="blog" className="py-20 relative overflow-hidden">
@@ -56,7 +64,7 @@ const BlogSection = () => {
           {/* Tabs */}
           <div className="flex items-center glass-card rounded-xl p-1 gap-1 self-start">
             <button
-              onClick={() => { setActiveTab('psychology'); setSearch(''); }}
+              onClick={() => { setActiveTab('psychology'); setSearch(''); setPage(1); }}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
                 activeTab === 'psychology'
                   ? 'bg-purple-600/50 text-purple-100 border border-purple-500/60 shadow-[0_0_12px_rgba(147,51,234,0.4)]'
@@ -69,7 +77,7 @@ const BlogSection = () => {
               Психология
             </button>
             <button
-              onClick={() => { setActiveTab('sales'); setSearch(''); }}
+              onClick={() => { setActiveTab('sales'); setSearch(''); setPage(1); }}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
                 activeTab === 'sales'
                   ? 'bg-blue-600/50 text-blue-100 border border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.4)]'
@@ -89,7 +97,7 @@ const BlogSection = () => {
             <Input
               placeholder="Поиск по статьям..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="pl-9 bg-background/30 border-border/50 focus:border-primary/50"
             />
           </div>
@@ -98,15 +106,15 @@ const BlogSection = () => {
         {/* Grid */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeTab + search}
+            key={activeTab + search + page}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            {filtered.length > 0 ? (
+            {paged.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filtered.map((post, i) => (
+                {paged.map((post, i) => (
                   <BlogCard
                     key={post.id}
                     post={post}
@@ -123,6 +131,44 @@ const BlogSection = () => {
             )}
           </motion.div>
         </AnimatePresence>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-center gap-2 mt-10"
+          >
+            <button
+              onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              disabled={page === 1}
+              className="flex items-center justify-center w-10 h-10 rounded-lg border border-border/50 bg-background/30 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                onClick={() => { setPage(n); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className={`flex items-center justify-center w-10 h-10 rounded-lg text-sm font-bold transition-all ${
+                  n === page
+                    ? 'bg-primary/20 text-primary border border-primary/50 shadow-[0_0_10px_rgba(147,51,234,0.3)]'
+                    : 'border border-border/50 bg-background/30 text-muted-foreground hover:text-primary hover:border-primary/50'
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+            <button
+              onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              disabled={page === totalPages}
+              className="flex items-center justify-center w-10 h-10 rounded-lg border border-border/50 bg-background/30 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
       </div>
 
     </section>

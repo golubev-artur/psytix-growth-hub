@@ -252,11 +252,17 @@ const BlogPostPage = () => {
             {post.excerpt}
           </motion.p>
 
-          {/* Chart */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-xl overflow-hidden bg-background/30 border border-border/30 p-4 mb-8">
-            <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">{post.chartTitle}</p>
-            <FullChart post={post} />
-          </motion.div>
+          {/* Image or Chart */}
+          {post.image ? (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-xl overflow-hidden mb-8">
+              <img src={post.image} alt={post.title} className="w-full h-auto rounded-xl" loading="lazy" />
+            </motion.div>
+          ) : post.chartData && post.chartData.length > 0 ? (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-xl overflow-hidden bg-background/30 border border-border/30 p-4 mb-8">
+              <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">{post.chartTitle}</p>
+              <FullChart post={post} />
+            </motion.div>
+          ) : null}
 
           {/* Content */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-4 mb-10">

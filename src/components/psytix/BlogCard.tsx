@@ -112,10 +112,16 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
         </p>
       </div>
 
-      {/* Mini chart */}
-      <div className="mx-5 mb-3 rounded-xl overflow-hidden bg-background/30 border border-border/30">
-        <MiniChart post={post} />
-      </div>
+      {/* Image or Mini chart */}
+      {post.image ? (
+        <div className="mx-5 mb-3 rounded-xl overflow-hidden">
+          <img src={post.image} alt={post.title} className="w-full h-40 object-cover rounded-xl" loading="lazy" />
+        </div>
+      ) : post.chartData && post.chartData.length > 0 ? (
+        <div className="mx-5 mb-3 rounded-xl overflow-hidden bg-background/30 border border-border/30">
+          <MiniChart post={post} />
+        </div>
+      ) : null}
 
       {/* Meta */}
       <div className="px-5 pb-3 flex items-center gap-4 text-xs text-muted-foreground">
