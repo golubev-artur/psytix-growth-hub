@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Calendar, Clock, Brain, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, Brain, TrendingUp, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -124,7 +124,11 @@ const BlogCard = ({ post, onStart, index = 0 }: BlogCardProps) => {
       ) : null}
 
       {/* Meta */}
-      <div className="px-5 pb-3 flex items-center gap-4 text-xs text-muted-foreground">
+      <div className="px-5 pb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <User className="w-3.5 h-3.5" />
+          {isPsy ? 'Лозовая М.А.' : 'Голубев А.А.'}
+        </span>
         <span className="flex items-center gap-1">
           <Calendar className="w-3.5 h-3.5" />
           {formattedDate}

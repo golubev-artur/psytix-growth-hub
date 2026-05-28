@@ -3,7 +3,7 @@ import { sendLeadToTelegram } from '@/lib/telegram';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, BookOpen, Send, CheckCircle2, ArrowLeft, Sparkles, Brain, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, BookOpen, Send, CheckCircle2, ArrowLeft, Sparkles, Brain, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   ResponsiveContainer,
@@ -211,8 +211,8 @@ const BlogPostPage = () => {
             }
           },
           "author": {
-            "@type": "Organization",
-            "name": "Psytix"
+            "@type": "Person",
+            "name": isPsy ? "Лозовая Мария Александровна" : "Голубев Артур Артурович"
           }
         })}</script>
         <script type="application/ld+json">{JSON.stringify({
@@ -241,7 +241,8 @@ const BlogPostPage = () => {
               {isPsy ? 'Психология' : 'Продажи'}
             </span>
             <h1 className="text-3xl font-bold text-foreground leading-tight mb-4">{post.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
+              <span className="flex items-center gap-1"><User className="w-4 h-4" />{isPsy ? 'Лозовая Мария Александровна' : 'Голубев Артур Артурович'}</span>
               <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formattedDate}</span>
               <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{post.readTime}</span>
             </div>
