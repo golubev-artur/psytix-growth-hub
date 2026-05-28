@@ -242,7 +242,11 @@ const BlogPostPage = () => {
             </span>
             <h1 className="text-3xl font-bold text-foreground leading-tight mb-4">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
-              <span className="flex items-center gap-1"><User className="w-4 h-4" />{isPsy ? 'Лозовая Мария Александровна' : 'Голубев Артур Артурович'}</span>
+              {isPsy ? (
+                <Link to="/specialist" className="flex items-center gap-1 hover:text-primary transition-colors"><User className="w-4 h-4" />Лозовая Мария Александровна</Link>
+              ) : (
+                <span className="flex items-center gap-1"><User className="w-4 h-4" />Голубев Артур Артурович</span>
+              )}
               <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formattedDate}</span>
               <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{post.readTime}</span>
             </div>

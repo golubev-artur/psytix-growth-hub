@@ -11,6 +11,7 @@ import Reviews from "./pages/Reviews";
 import BlogPostPage from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Specialist from "./pages/Specialist";
 import CookieBanner from "./components/psytix/CookieBanner";
 import AIChatAssistant from "./components/psytix/AIChatAssistant";
 import ScrollToTop from "./components/ScrollToTop";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/module/:id" element={<ModulePage />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/specialist" element={<Specialist />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
