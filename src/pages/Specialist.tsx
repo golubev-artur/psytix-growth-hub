@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck } from 'lucide-react';
+import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle } from 'lucide-react';
 import Navbar from '@/components/psytix/Navbar';
 import Footer from '@/components/psytix/Footer';
+import { sendLeadToTelegram } from '@/lib/telegram';
 
 const education = [
   { year: '2024', title: 'Московский институт психоанализа', desc: 'Магистратура по профилю «Клиническая психология»', diplomas: [] as string[] },
@@ -110,6 +111,24 @@ const DiplomaModal = ({ images, onClose }: { images: string[]; onClose: () => vo
 
 const Specialist = () => {
   const [diplomaImages, setDiplomaImages] = useState<string[] | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', messenger: '' as '' | 'telegram' | 'max', messengerContact: '', comment: '' });
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendLeadToTelegram({
+      name: form.name,
+      email: form.email,
+      comment: form.comment || undefined,
+      messenger: form.messenger === 'telegram' ? 'Telegram' : form.messenger === 'max' ? 'MAX' : undefined,
+      messengerContact: form.messengerContact || undefined,
+      page: window.location.href,
+      button: 'Записаться на бесплатную консультацию — Специалист',
+    });
+    setSubmitted(true);
+    setFormOpen(false);
+  };
 
   return (
   <>
@@ -158,6 +177,115 @@ const Specialist = () => {
               <p className="text-xs text-muted-foreground">{label}</p>
             </div>
           ))}
+        </motion.section>
+
+        {/* CTA — Consultation */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+          <div className="glass-card rounded-2xl p-6 md:p-8 text-center border-primary/20 bg-gradient-to-br from-purple-500/5 to-blue-500/5">
+            {submitted ? (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-4">
+                <CheckCircle2 className="w-12 h-12 text-green-400 mx-auto mb-3" />
+                <p className="text-lg font-bold text-foreground mb-1">Заявка отправлена!</p>
+                <p className="text-sm text-muted-foreground">Мария свяжется с вами в ближайшее время</p>
+              </motion.div>
+            ) : !formOpen ? (
+              <>
+                <CalendarCheck className="w-10 h-10 text-primary mx-auto mb-3" />
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">Бесплатная консультация</h2>
+                <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">Запишитесь на бесплатную 15-минутную консультацию, чтобы обсудить ваш запрос и подобрать подходящий формат работы</p>
+                <button
+                  onClick={() => setFormOpen(true)}
+                  className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold text-primary-foreground gradient-primary shadow-glow-sm hover:scale-105 transition-transform"
+                >
+                  <Send className="w-4 h-4" />
+                  Записаться на бесплатную консультацию
+                </button>
+              </>
+            ) : (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <h2 className="text-xl font-bold text-foreground mb-4 flex items-center justify-center gap-2"><CalendarCheck className="w-5 h-5 text-primary" />Запись на консультацию</h2>
+                <form onSubmit={handleFormSubmit} className="max-w-md mx-auto space-y-3 text-left">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ваше имя"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                  />
+                  <input
+                    type="email"
+                    required
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                  />
+
+                  {/* Messenger choice */}
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-2">Удобный канал связи (необязательно)</p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, messenger: form.messenger === 'telegram' ? '' : 'telegram', messengerContact: '' })}
+                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${form.messenger === 'telegram' ? 'border-[#29B6F6] bg-[#29B6F6]/10 text-[#29B6F6]' : 'border-border bg-background/40 text-muted-foreground hover:border-[#29B6F6]/50'}`}
+                      >
+                        <Send className="w-4 h-4" />
+                        Telegram
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, messenger: form.messenger === 'max' ? '' : 'max', messengerContact: '' })}
+                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${form.messenger === 'max' ? 'border-[#FF6F00] bg-[#FF6F00]/10 text-[#FF6F00]' : 'border-border bg-background/40 text-muted-foreground hover:border-[#FF6F00]/50'}`}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        MAX
+                      </button>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {form.messenger && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                        <input
+                          type="text"
+                          placeholder={form.messenger === 'telegram' ? '@username или номер телефона' : 'Ссылка на профиль MAX'}
+                          value={form.messengerContact}
+                          onChange={(e) => setForm({ ...form, messengerContact: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <textarea
+                    placeholder="Кратко опишите ваш запрос (необязательно)"
+                    value={form.comment}
+                    onChange={(e) => setForm({ ...form, comment: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none"
+                  />
+
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setFormOpen(false)}
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors"
+                    >
+                      Отмена
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-primary-foreground gradient-primary shadow-glow-sm hover:scale-105 transition-transform"
+                    >
+                      Отправить
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </div>
         </motion.section>
 
         {/* About */}

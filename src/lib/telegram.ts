@@ -10,6 +10,8 @@ interface LeadData {
   button: string;
   quizAnswers?: string;
   recommendations?: string;
+  messenger?: string;
+  messengerContact?: string;
 }
 
 export function sendLeadToTelegram(data: LeadData): void {
@@ -26,6 +28,8 @@ export function sendLeadToTelegram(data: LeadData): void {
   ];
 
   if (data.interest) lines.push(`💬 <b>Интерес:</b> ${data.interest}`);
+  if (data.messenger) lines.push(`📲 <b>Мессенджер:</b> ${data.messenger}`);
+  if (data.messengerContact) lines.push(`🔗 <b>Контакт:</b> ${data.messengerContact}`);
   if (data.comment) lines.push(`📝 <b>Комментарий:</b> ${data.comment}`);
   if (data.quizAnswers) lines.push("", `📋 <b>Ответы квиза:</b>\n${data.quizAnswers}`);
   if (data.recommendations) lines.push("", `🎯 <b>Рекомендованные модули:</b>\n${data.recommendations}`);
