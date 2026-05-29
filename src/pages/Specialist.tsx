@@ -1,18 +1,27 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
-import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck } from 'lucide-react';
 import Navbar from '@/components/psytix/Navbar';
 import Footer from '@/components/psytix/Footer';
 
 const education = [
-  { year: '2024', title: 'Московский институт психоанализа', desc: 'Магистратура по профилю «Клиническая психология»' },
-  { year: '2026', title: 'Первый МГМУ им. И.М. Сеченова', desc: 'Переквалификация по медицинской психологии' },
-  { year: '2024', title: 'Ассоциация когнитивно-поведенческой психотерапии', desc: 'Когнитивно-поведенческий психотерапевт' },
-  { year: '2024', title: 'Театральный факультет (Школа нового театра)', desc: 'Профессиональная переподготовка — «Актерское мастерство»' },
-  { year: '2022', title: 'Московский институт гипноза', desc: 'Сертифицированный гипнотерапевт' },
-  { year: '2022', title: 'Московский институт психоанализа', desc: 'Сертификат «Невротические расстройства: причины, диагностика, принципы терапии»' },
-  { year: '2015', title: 'ЛГТУ', desc: 'Бакалавриат по профилю «Общая психология»' },
-  { year: '2014', title: 'РАНХиГС при Президенте РФ', desc: 'Специалитет по профилю «Финансы и кредит»' },
+  { year: '2024', title: 'Московский институт психоанализа', desc: 'Магистратура по профилю «Клиническая психология»', diplomas: [] as string[] },
+  { year: '2026', title: 'Первый МГМУ им. И.М. Сеченова', desc: 'Переквалификация по медицинской психологии', diplomas: [] as string[] },
+  { year: '2024', title: 'Ассоциация когнитивно-поведенческой психотерапии', desc: 'Когнитивно-поведенческий психотерапевт', diplomas: [
+    '/diplomas/kpt-2024.jpg',
+    '/diplomas/kpt-basics.jpg',
+    '/diplomas/kpt-intro-therapy.jpg',
+    '/diplomas/kpt-conceptualization.jpg',
+    '/diplomas/kpt-cognitive-therapy.jpg',
+    '/diplomas/kpt-rebt.jpg',
+    '/diplomas/kpt-anxiety.jpg',
+  ] },
+  { year: '2024', title: 'Театральный факультет (Школа нового театра)', desc: 'Профессиональная переподготовка — «Актерское мастерство»', diplomas: [] as string[] },
+  { year: '2022', title: 'Московский институт гипноза', desc: 'Сертифицированный гипнотерапевт', diplomas: ['/diplomas/hypnosis-2022.jpg'] },
+  { year: '2022', title: 'Московский институт психоанализа', desc: 'Сертификат «Невротические расстройства: причины, диагностика, принципы терапии»', diplomas: ['/diplomas/mip-neurotic-2022.jpg'] },
+  { year: '2015', title: 'ЛГТУ', desc: 'Бакалавриат по профилю «Общая психология»', diplomas: ['/diplomas/lgtu-2015.jpg'] },
+  { year: '2014', title: 'РАНХиГС при Президенте РФ', desc: 'Специалитет по профилю «Финансы и кредит»', diplomas: ['/diplomas/ranepa-2014.jpg'] },
 ];
 
 const methods = ['КПТ', 'АСТ', 'НЛП', 'Гипнотерапия', 'Гештальт-терапия', 'Эмоционально-образная терапия'];
@@ -50,7 +59,59 @@ const familyTopics = [
   'Эмоциональные и психологические проблемы',
 ];
 
-const Specialist = () => (
+const DiplomaModal = ({ images, onClose }: { images: string[]; onClose: () => void }) => {
+  const [idx, setIdx] = useState(0);
+  const multi = images.length > 1;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="relative max-w-3xl w-full max-h-[90vh] flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute -top-2 -right-2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="w-full overflow-hidden rounded-xl bg-background/20 border border-border/30">
+          <img src={images[idx]} alt="Диплом" className="w-full h-auto max-h-[80vh] object-contain" />
+        </div>
+
+        {multi && (
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              onClick={() => setIdx((i) => (i - 1 + images.length) % images.length)}
+              className="w-10 h-10 rounded-full bg-background/60 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="text-sm text-muted-foreground">{idx + 1} / {images.length}</span>
+            <button
+              onClick={() => setIdx((i) => (i + 1) % images.length)}
+              className="w-10 h-10 rounded-full bg-background/60 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const Specialist = () => {
+  const [diplomaImages, setDiplomaImages] = useState<string[] | null>(null);
+
+  return (
   <>
     <Helmet>
       <title>Мария Лозовая — Клинический психолог | Psytix</title>
@@ -167,22 +228,29 @@ const Specialist = () => (
         <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary" />Образование и квалификация</h2>
           <div className="space-y-3">
-            {education.map((e, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="glass-card rounded-xl p-4 flex items-start gap-4"
-              >
-                <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg shrink-0">{e.year}</span>
-                <div>
-                  <p className="text-sm font-bold text-foreground">{e.title}</p>
-                  <p className="text-xs text-muted-foreground">{e.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+            {education.map((e, i) => {
+              const hasDiploma = e.diplomas.length > 0;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06 }}
+                  className={`glass-card rounded-xl p-4 flex items-start gap-4 ${hasDiploma ? 'cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors' : ''}`}
+                  onClick={hasDiploma ? () => setDiplomaImages(e.diplomas) : undefined}
+                >
+                  <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg shrink-0">{e.year}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-foreground">{e.title}</p>
+                    <p className="text-xs text-muted-foreground">{e.desc}</p>
+                  </div>
+                  {hasDiploma && (
+                    <FileCheck className="w-5 h-5 text-primary/60 shrink-0 mt-1" />
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.section>
 
@@ -198,8 +266,15 @@ const Specialist = () => (
 
       </main>
       <Footer />
+
+      <AnimatePresence>
+        {diplomaImages && (
+          <DiplomaModal images={diplomaImages} onClose={() => setDiplomaImages(null)} />
+        )}
+      </AnimatePresence>
     </div>
   </>
-);
+  );
+};
 
 export default Specialist;
