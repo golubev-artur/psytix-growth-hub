@@ -37,7 +37,7 @@ const App = () => (
           <Route path="/module/:id" element={<ModulePage />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/specialist" element={<Specialist />} />
+          <Route path="/mariyalozovaya" element={<Specialist />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

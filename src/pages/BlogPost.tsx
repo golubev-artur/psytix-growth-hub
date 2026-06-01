@@ -243,7 +243,7 @@ const BlogPostPage = () => {
             <h1 className="text-3xl font-bold text-foreground leading-tight mb-4">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
               {isPsy ? (
-                <Link to="/specialist" className="flex items-center gap-1 hover:text-primary transition-colors"><User className="w-4 h-4" />Лозовая Мария Александровна</Link>
+                <Link to="/mariyalozovaya" className="flex items-center gap-1 hover:text-primary transition-colors"><User className="w-4 h-4" />Лозовая Мария Александровна</Link>
               ) : (
                 <span className="flex items-center gap-1"><User className="w-4 h-4" />Голубев Артур Артурович</span>
               )}

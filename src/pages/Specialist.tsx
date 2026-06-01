@@ -133,9 +133,88 @@ const Specialist = () => {
   return (
   <>
     <Helmet>
-      <title>Мария Лозовая — Клинический психолог | Psytix</title>
-      <meta name="description" content="Клинический психолог Мария Лозовая — член Ассоциации когнитивно-поведенческой психотерапии. Более 2 500 часов практики. Психотерапия со взрослыми, детьми и семьями." />
-      <link rel="canonical" href="https://psytix.ru/specialist" />
+      <title>Мария Лозовая — Клинический психолог в Москве | Психотерапия КПТ</title>
+      <meta name="description" content="Мария Лозовая — клинический психолог, член Ассоциации когнитивно-поведенческой психотерапии. Более 2 500 часов практики. Психотерапия со взрослыми, детьми и семьями. КПТ, гипнотерапия, гештальт. Приём в Москве и онлайн. Запись на бесплатную консультацию." />
+      <meta name="keywords" content="Мария Лозовая, Мария Лозовая психолог, Лозовая Мария Александровна, клинический психолог Москва, психотерапевт Москва, КПТ психолог, когнитивно-поведенческая терапия, психолог онлайн, детский психолог Москва, семейный психолог, гипнотерапевт, панические атаки психолог, психолог самооценка, mariyalozovaya" />
+      <link rel="canonical" href="https://psytix.ru/mariyalozovaya" />
+      <meta property="og:type" content="profile" />
+      <meta property="og:title" content="Мария Лозовая — Клинический психолог в Москве" />
+      <meta property="og:description" content="Клинический психолог Мария Лозовая. Более 2 500 часов практики. КПТ, гипнотерапия, гештальт. Психотерапия со взрослыми, детьми и семьями. Приём в Москве и онлайн." />
+      <meta property="og:url" content="https://psytix.ru/mariyalozovaya" />
+      <meta property="og:image" content="https://psytix.ru/specialist-photo.jpg" />
+      <meta property="og:site_name" content="Psytix" />
+      <meta property="og:locale" content="ru_RU" />
+      <meta property="profile:first_name" content="Мария" />
+      <meta property="profile:last_name" content="Лозовая" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Мария Лозовая — Клинический психолог в Москве" />
+      <meta name="twitter:description" content="Клинический психолог, член Ассоциации КПТ. Более 2 500 часов практики. Запись на бесплатную консультацию." />
+      <meta name="twitter:image" content="https://psytix.ru/specialist-photo.jpg" />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Мария Лозовая",
+        "givenName": "Мария",
+        "familyName": "Лозовая",
+        "additionalName": "Александровна",
+        "jobTitle": "Клинический психолог",
+        "description": "Клинический психолог, член Ассоциации когнитивно-поведенческой психотерапии. Более 2 500 часов практики. Психотерапия со взрослыми, детьми и семьями.",
+        "url": "https://psytix.ru/mariyalozovaya",
+        "image": "https://psytix.ru/specialist-photo.jpg",
+        "sameAs": ["https://mariyalozovaya.ru"],
+        "alumniOf": [
+          { "@type": "CollegeOrUniversity", "name": "Московский институт психоанализа" },
+          { "@type": "CollegeOrUniversity", "name": "Первый МГМУ им. И.М. Сеченова" },
+          { "@type": "CollegeOrUniversity", "name": "РАНХиГС при Президенте РФ" },
+          { "@type": "CollegeOrUniversity", "name": "ЛГТУ" }
+        ],
+        "memberOf": { "@type": "Organization", "name": "Ассоциация когнитивно-поведенческой психотерапии" },
+        "knowsAbout": ["КПТ", "Когнитивно-поведенческая терапия", "Гипнотерапия", "Гештальт-терапия", "Детская психология", "Семейная психотерапия", "Панические атаки", "Фобии", "Самооценка"],
+        "workLocation": {
+          "@type": "Place",
+          "name": "Кабинет психолога",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Мясницкая ул., 46 стр. 1, кабинет 27",
+            "addressLocality": "Москва",
+            "addressCountry": "RU"
+          }
+        }
+      })}</script>
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Психолог Мария Лозовая",
+        "description": "Психологическая помощь взрослым, детям и семьям. КПТ, гипнотерапия, гештальт-терапия.",
+        "url": "https://psytix.ru/mariyalozovaya",
+        "image": "https://psytix.ru/specialist-photo.jpg",
+        "telephone": "",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Мясницкая ул., 46 стр. 1, кабинет 27",
+          "addressLocality": "Москва",
+          "addressCountry": "RU"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 55.7650,
+          "longitude": 37.6380
+        },
+        "areaServed": [
+          { "@type": "City", "name": "Москва" },
+          { "@type": "Country", "name": "Россия" }
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Услуги психолога",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Психотерапия со взрослыми", "description": "КПТ, гипнотерапия, гештальт. 50–60 мин." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Психотерапия с детьми и подростками", "description": "Сказкотерапия, техники Станиславского. 50–60 мин." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Семейная психотерапия", "description": "Интегрированный подход. 90 мин." } }
+          ]
+        }
+      })}</script>
     </Helmet>
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -215,8 +294,7 @@ const Specialist = () => {
                   />
                   <input
                     type="email"
-                    required
-                    placeholder="Email"
+                    placeholder="Email (необязательно)"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
