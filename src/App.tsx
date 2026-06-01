@@ -12,6 +12,7 @@ import BlogPostPage from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Specialist from "./pages/Specialist";
+import Golubev from "./pages/Golubev";
 import CookieBanner from "./components/psytix/CookieBanner";
 import AIChatAssistant from "./components/psytix/AIChatAssistant";
 import ScrollToTop from "./components/ScrollToTop";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/mariyalozovaya" element={<Specialist />} />
+          <Route path="/arturgolubev" element={<Golubev />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

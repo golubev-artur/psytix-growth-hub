@@ -120,7 +120,7 @@ const ModulePage = () => {
                 {course.category === 'psychology' ? (
                   <Link to="/mariyalozovaya" className="text-sm font-bold text-foreground hover:text-primary transition-colors">Лозовая Мария Александровна</Link>
                 ) : (
-                  <p className="text-sm font-bold text-foreground">Голубев Артур Артурович</p>
+                  <Link to="/arturgolubev" className="text-sm font-bold text-foreground hover:text-primary transition-colors">Голубев Артур Артурович</Link>
                 )}
               </div>
             </div>
