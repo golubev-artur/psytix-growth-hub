@@ -7,8 +7,8 @@ import Footer from '@/components/psytix/Footer';
 import { sendLeadToTelegram } from '@/lib/telegram';
 
 const education = [
-  { year: '2014', title: 'РАНХиГС при Президенте РФ', desc: 'Бакалавриат — «Менеджмент организации»' },
-  { year: '2016', title: 'РАНХиГС при Президенте РФ', desc: 'Магистратура — «Стратегический менеджмент»' },
+  { year: '', title: 'МИРЭА — Российский технологический университет', desc: 'Факультет кибернетики' },
+  { year: '', title: 'УРАО — Университет Российской академии образования', desc: 'Факультет экономики и бизнеса' },
 ];
 
 const expertise = [
@@ -99,7 +99,8 @@ const Golubev = () => {
         "image": "https://psytix.ru/arturgolubev-photo.jpg",
         "sameAs": ["https://golubev-consulting.ru"],
         "alumniOf": [
-          { "@type": "CollegeOrUniversity", "name": "РАНХиГС при Президенте РФ" }
+          { "@type": "CollegeOrUniversity", "name": "МИРЭА — Российский технологический университет" },
+          { "@type": "CollegeOrUniversity", "name": "УРАО — Университет Российской академии образования" }
         ],
         "knowsAbout": ["Продажи", "CRM", "Бизнес-процессы", "Маркетинг", "Управление", "OKR", "Автоматизация", "Клиентский сервис", "Стратегия"],
         "worksFor": { "@type": "Organization", "name": "ГОЛУБЕВ КОНСАЛТИНГ" }
@@ -273,7 +274,7 @@ const Golubev = () => {
                 transition={{ delay: i * 0.06 }}
                 className="glass-card rounded-xl p-4 flex items-start gap-4"
               >
-                <span className="text-sm font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-lg shrink-0">{e.year}</span>
+                {e.year && <span className="text-sm font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-lg shrink-0">{e.year}</span>}
                 <div>
                   <p className="text-sm font-bold text-foreground">{e.title}</p>
                   <p className="text-xs text-muted-foreground">{e.desc}</p>
