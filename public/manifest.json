@@ -4,7 +4,7 @@
   "description": "Образовательная платформа нового поколения. 16 модулей с научной базой, реальными метриками и практическими инструментами для роста.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f0f2ff",
+  "background_color": "#0a0a1a",
   "theme_color": "#7c5cfc",
   "icons": [
     {
@@ -16,6 +16,16 @@
       "src": "/favicon.ico",
       "sizes": "48x48",
       "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }

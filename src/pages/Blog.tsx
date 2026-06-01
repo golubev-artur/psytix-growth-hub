@@ -15,6 +15,10 @@ const Blog = () => {
         <meta property="og:url" content="https://psytix.ru/blog" />
         <meta property="og:image" content="https://psytix.ru/og-image.png" />
         <meta property="og:site_name" content="Psytix" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Блог Psytix — Статьи по психологии и продажам" />
+        <meta name="twitter:description" content="Экспертные статьи с графиками и статистикой по психологии и продажам." />
+        <meta name="twitter:image" content="https://psytix.ru/og-image.png" />
         <link rel="canonical" href="https://psytix.ru/blog" />
       </Helmet>
       <Navbar />

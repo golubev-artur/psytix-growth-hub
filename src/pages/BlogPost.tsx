@@ -190,9 +190,16 @@ const BlogPostPage = () => {
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://psytix.ru${getPostUrl(post)}`} />
-        <meta property="og:image" content="https://psytix.ru/og-image.svg" />
+        <meta property="og:image" content={post.image ? `https://psytix.ru${post.image}` : 'https://psytix.ru/og-image.png'} />
         <meta property="og:site_name" content="Psytix" />
+        <meta property="og:locale" content="ru_RU" />
         <meta property="article:published_time" content={post.date} />
+        <meta property="article:author" content={isPsy ? 'Лозовая Мария Александровна' : 'Голубев Артур Артурович'} />
+        <meta property="article:section" content={isPsy ? 'Психология' : 'Продажи'} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${post.title} — Psytix`} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={post.image ? `https://psytix.ru${post.image}` : 'https://psytix.ru/og-image.png'} />
         <link rel="canonical" href={`https://psytix.ru${getPostUrl(post)}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -201,7 +208,7 @@ const BlogPostPage = () => {
           "description": post.excerpt,
           "datePublished": post.date,
           "url": `https://psytix.ru${getPostUrl(post)}`,
-          "image": "https://psytix.ru/og-image.svg",
+          "image": post.image ? `https://psytix.ru${post.image}` : 'https://psytix.ru/og-image.png',
           "publisher": {
             "@type": "Organization",
             "name": "Psytix",

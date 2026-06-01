@@ -15,8 +15,12 @@ const Reviews = () => {
         <meta property="og:description" content="Отзывы студентов платформы Psytix. Реальные результаты обучения психологии и продажам." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://psytix.ru/reviews" />
-        <meta property="og:image" content="https://psytix.ru/og-image.svg" />
+        <meta property="og:image" content="https://psytix.ru/og-image.png" />
         <meta property="og:site_name" content="Psytix" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Отзывы — Psytix" />
+        <meta name="twitter:description" content="Отзывы студентов платформы Psytix. Реальные результаты обучения." />
+        <meta name="twitter:image" content="https://psytix.ru/og-image.png" />
         <link rel="canonical" href="https://psytix.ru/reviews" />
       </Helmet>
       <div className="min-h-screen bg-background">
