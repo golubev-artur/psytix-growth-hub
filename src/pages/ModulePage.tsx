@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { sendLeadToTelegram } from "@/lib/telegram";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Clock, Users, Award, TrendingUp } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Clock, Users, Award, TrendingUp, User } from "lucide-react";
 import { psychologyBlocks, salesBlocks } from "@/data/courses";
 import { moduleDetails } from "@/data/moduleDetails";
 import Navbar from "@/components/psytix/Navbar";
@@ -106,9 +106,24 @@ const ModulePage = () => {
               {course.title}
             </h1>
 
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-3xl">
+            <p className="text-lg text-muted-foreground leading-relaxed mb-6 max-w-3xl">
               {detail.fullDescription}
             </p>
+
+            {/* Author */}
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Преподаватель</p>
+                {course.category === 'psychology' ? (
+                  <Link to="/mariyalozovaya" className="text-sm font-bold text-foreground hover:text-primary transition-colors">Лозовая Мария Александровна</Link>
+                ) : (
+                  <p className="text-sm font-bold text-foreground">Голубев Артур Артурович</p>
+                )}
+              </div>
+            </div>
 
             {/* Key Facts */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
 import MetricsChart from "./MetricsChart";
 import CaseSlider from "./CaseSlider";
 import type { CourseBlock } from "@/data/courses";
@@ -41,6 +42,12 @@ const CourseCard = ({ course, index }: CourseCardProps) => {
         <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
           {course.description}
         </p>
+
+        {/* Author */}
+        <div className="flex items-center gap-2 mb-4 text-xs text-muted-foreground">
+          <User className="w-3.5 h-3.5" />
+          <span>{course.category === 'psychology' ? 'Лозовая Мария Александровна' : 'Голубев Артур Артурович'}</span>
+        </div>
 
         {/* Benefit */}
         <div className="flex items-center gap-2 mb-5 p-3 bg-psytix-success/5 rounded-xl border border-psytix-success/10">
