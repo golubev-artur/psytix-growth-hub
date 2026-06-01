@@ -147,9 +147,8 @@ const LeadFormInChat = ({ defaultInterest, onSuccess }: { defaultInterest: strin
         className="text-sm bg-background/60 border-border/50"
       />
       <Input
-        required
         type="email"
-        placeholder="Email *"
+        placeholder="Email (необязательно)"
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
         className="text-sm bg-background/60 border-border/50"

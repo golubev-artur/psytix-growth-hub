@@ -165,11 +165,10 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
           />
         </div>
         <div>
-          <label className="block text-xs text-muted-foreground mb-1">Email *</label>
+          <label className="block text-xs text-muted-foreground mb-1">Email</label>
           <Input
-            required
             type="email"
-            placeholder="your@email.com"
+            placeholder="Email (необязательно)"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="bg-background/50 border-border/50 focus:border-primary/50"

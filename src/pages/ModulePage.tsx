@@ -160,8 +160,7 @@ const ModulePage = () => {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
               <Input
-                placeholder="Email *"
-                required
+                placeholder="Email (необязательно)"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}

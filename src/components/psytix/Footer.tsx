@@ -50,9 +50,8 @@ const Footer = () => {
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
               <Input
-                required
                 type="email"
-                placeholder="Ваш email"
+                placeholder="Ваш email (необязательно)"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 py-5 rounded-xl bg-background/80 border-border"

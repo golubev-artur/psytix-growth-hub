@@ -260,9 +260,8 @@ const QuizTest = () => {
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
                 <Input
-                  required
                   type="email"
-                  placeholder="Email *"
+                  placeholder="Email (необязательно)"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
