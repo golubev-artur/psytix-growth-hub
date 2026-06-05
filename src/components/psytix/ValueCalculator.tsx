@@ -1,8 +1,23 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Calculator, TrendingUp, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calculator, TrendingUp, Sparkles, HelpCircle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+
+const Tooltip = ({ text, visible }: { text: string; visible: boolean }) => (
+  <AnimatePresence>
+    {visible && (
+      <motion.div
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 4 }}
+        className="absolute left-0 right-0 top-full mt-1 z-10 p-2.5 rounded-lg bg-background border border-border shadow-lg text-xs text-muted-foreground leading-relaxed"
+      >
+        {text}
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
 
 const ValueCalculator = () => {
   const [revenue, setRevenue] = useState([500000]);
@@ -34,6 +49,8 @@ const ValueCalculator = () => {
   const productivityGain = teamValue * 120000; // per person/year
   const totalValue = revenueGain + productivityGain;
 
+  const [tip, setTip] = useState<string | null>(null);
+
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(n);
 
@@ -64,8 +81,14 @@ const ValueCalculator = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Inputs */}
             <div className="space-y-8">
-              <div>
-                <label className="text-sm font-medium text-foreground block mb-2">Годовой оборот</label>
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="text-sm font-medium text-foreground">Годовой оборот</label>
+                  <button type="button" onClick={() => setTip(tip === 'revenue' ? null : 'revenue')} className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                    <HelpCircle className="w-4 h-4" />
+                  </button>
+                </div>
+                <Tooltip visible={tip === 'revenue'} text="Общая сумма денег, которую ваша компания получает от продаж за год (до вычета расходов). Введите цифру вручную или используйте шкалу." />
                 <div className="flex items-center gap-2 mb-3">
                   <input
                     type="text"
@@ -87,11 +110,17 @@ const ValueCalculator = () => {
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <div className="flex justify-between mb-3">
-                  <label className="text-sm font-medium text-foreground">Размер команды</label>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground">Размер команды</label>
+                    <button type="button" onClick={() => setTip(tip === 'team' ? null : 'team')} className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
+                  </div>
                   <span className="text-sm font-bold text-primary">{teamValue} чел.</span>
                 </div>
+                <Tooltip visible={tip === 'team'} text="Количество сотрудников, которые участвуют в продажах и работе с клиентами. Чем больше команда — тем выше суммарный эффект от обучения." />
                 <Slider
                   value={teamSize}
                   onValueChange={setTeamSize}
@@ -102,11 +131,17 @@ const ValueCalculator = () => {
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <div className="flex justify-between mb-3">
-                  <label className="text-sm font-medium text-foreground">Текущая конверсия</label>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground">Текущая конверсия</label>
+                    <button type="button" onClick={() => setTip(tip === 'conv' ? null : 'conv')} className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
+                  </div>
                   <span className="text-sm font-bold text-primary">{convValue}%</span>
                 </div>
+                <Tooltip visible={tip === 'conv'} text="Процент клиентов, которые совершают покупку из всех обратившихся. Например, если из 100 заявок покупают 15 — конверсия 15%." />
                 <Slider
                   value={convRate}
                   onValueChange={setConvRate}
@@ -121,33 +156,45 @@ const ValueCalculator = () => {
             {/* Results */}
             <div className="flex flex-col justify-center">
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+                <div className="relative p-4 rounded-xl bg-secondary/50 border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <TrendingUp className="w-4 h-4 text-psytix-success" />
                     <span className="text-xs text-muted-foreground">Рост конверсии</span>
+                    <button type="button" onClick={() => setTip(tip === 'r-conv' ? null : 'r-conv')} className="ml-auto text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                   <p className="text-lg font-bold text-foreground">
                     {convValue}% → {(convValue + convImprovement).toFixed(1)}%
                   </p>
+                  <Tooltip visible={tip === 'r-conv'} text="Прогнозируемый рост конверсии на 45% от текущего уровня. Основано на средних результатах компаний после обучения психологии продаж и переговоров." />
                 </div>
 
-                <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+                <div className="relative p-4 rounded-xl bg-secondary/50 border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <Calculator className="w-4 h-4 text-primary" />
                     <span className="text-xs text-muted-foreground">Доп. выручка / год</span>
+                    <button type="button" onClick={() => setTip(tip === 'r-rev' ? null : 'r-rev')} className="ml-auto text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                   <p className="text-lg font-bold text-foreground">{formatCurrency(revenueGain)}</p>
+                  <Tooltip visible={tip === 'r-rev'} text="Дополнительная выручка = ваш годовой оборот × прирост конверсии. Это сумма, которую компания может дополнительно заработать за год благодаря повышению эффективности продаж." />
                 </div>
 
-                <div className="p-5 rounded-xl gradient-primary shadow-glow-sm">
+                <div className="relative p-5 rounded-xl gradient-primary shadow-glow-sm">
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-4 h-4 text-primary-foreground/70" />
                     <span className="text-xs text-primary-foreground/70">Общая ценность</span>
+                    <button type="button" onClick={() => setTip(tip === 'r-total' ? null : 'r-total')} className="ml-auto text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                   <p className="text-2xl font-bold text-primary-foreground">
                     {formatCurrency(totalValue)}
                   </p>
                   <p className="text-xs text-primary-foreground/60 mt-1">в год</p>
+                  <Tooltip visible={tip === 'r-total'} text="Общая ценность = доп. выручка + рост продуктивности команды (120 000 ₽ на сотрудника в год за счёт улучшения навыков коммуникации и переговоров)." />
                 </div>
               </div>
 
