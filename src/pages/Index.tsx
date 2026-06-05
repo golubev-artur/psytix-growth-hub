@@ -49,7 +49,7 @@ const Index = () => {
       </Helmet>
       <Navbar />
       <Hero />
-      <PromoVideo />
+      <ValueCalculator />
       <MissionBlock />
 
       <CourseSection
@@ -66,7 +66,7 @@ const Index = () => {
         category="sales"
       />
 
-      <ValueCalculator />
+      <PromoVideo />
       <QuizTest />
       <Footer />
 
