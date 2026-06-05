@@ -37,7 +37,7 @@ const CourseSection = ({ title, subtitle, blocks, category }: CourseSectionProps
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {blocks.map((block, index) => (
             <CourseCard key={block.id} course={block} index={index} />
           ))}

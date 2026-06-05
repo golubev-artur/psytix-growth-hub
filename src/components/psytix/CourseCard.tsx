@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
-import MetricsChart from "./MetricsChart";
-import CaseSlider from "./CaseSlider";
 import type { CourseBlock } from "@/data/courses";
 
 interface CourseCardProps {
@@ -23,56 +21,45 @@ const CourseCard = ({ course, index }: CourseCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="glass-card rounded-2xl overflow-hidden card-3d group cursor-pointer shine gradient-border"
+      className="glass-card rounded-xl overflow-hidden card-3d group cursor-pointer shine gradient-border"
       onClick={() => navigate(`/module/${course.id}`)}
     >
-      <div className="p-6">
+      <div className="p-3">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-glow-sm">
-            <Icon className="w-6 h-6 text-primary-foreground" />
+        <div className="flex items-start justify-between mb-2">
+          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shadow-glow-sm">
+            <Icon className="w-4 h-4 text-primary-foreground" />
           </div>
-          <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 text-xs">
+          <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 text-[10px] px-1.5 py-0.5">
             {course.badgeText}
           </Badge>
         </div>
 
         {/* Title & Description */}
-        <h3 className="text-lg font-bold text-foreground mb-2">{course.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+        <h3 className="text-sm font-bold text-foreground mb-1 line-clamp-2">{course.title}</h3>
+        <p className="text-xs text-muted-foreground leading-relaxed mb-2 line-clamp-2">
           {course.description}
         </p>
 
         {/* Author */}
-        <div className="flex items-center gap-2 mb-4 text-xs text-muted-foreground">
-          <User className="w-3.5 h-3.5" />
-          <span>{course.category === 'psychology' ? 'Лозовая Мария Александровна' : 'Голубев Артур Артурович'}</span>
+        <div className="flex items-center gap-1.5 mb-2 text-[10px] text-muted-foreground">
+          <User className="w-3 h-3" />
+          <span>{course.category === 'psychology' ? 'Лозовая М.А.' : 'Голубев А.А.'}</span>
         </div>
 
         {/* Benefit */}
-        <div className="flex items-center gap-2 mb-5 p-3 bg-psytix-success/5 rounded-xl border border-psytix-success/10">
-          <BenefitIcon className="w-5 h-5 text-psytix-success flex-shrink-0" />
-          <span className="text-sm font-medium text-psytix-success">{course.benefitText}</span>
+        <div className="flex items-center gap-1.5 mb-3 p-2 bg-psytix-success/5 rounded-lg border border-psytix-success/10">
+          <BenefitIcon className="w-3.5 h-3.5 text-psytix-success flex-shrink-0" />
+          <span className="text-xs font-medium text-psytix-success line-clamp-1">{course.benefitText}</span>
         </div>
-
-        {/* Metrics Chart */}
-        <div className="mb-5">
-          <MetricsChart
-            before={course.metricsBefore}
-            after={course.metricsAfter}
-            label={course.metricsLabel}
-          />
-        </div>
-
-        {/* Case Slider */}
-        <CaseSlider cases={course.cases} />
 
         {/* CTA Button */}
         <Button
-          className="w-full mt-4 gradient-primary text-primary-foreground rounded-xl"
+          size="sm"
+          className="w-full gradient-primary text-primary-foreground rounded-lg text-xs h-8"
           onClick={(e) => { e.stopPropagation(); navigate(`/module/${course.id}`); }}
         >
-          Подробнее о модуле
+          Подробнее
         </Button>
       </div>
     </motion.div>
