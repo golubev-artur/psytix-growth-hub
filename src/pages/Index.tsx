@@ -66,8 +66,8 @@ const Index = () => {
         category="sales"
       />
 
-      <QuizTest />
       <ValueCalculator />
+      <QuizTest />
       <Footer />
 
       {/* Overlays */}
