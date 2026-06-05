@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle } from 'lucide-react';
+import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle, ShoppingCart, BookMarked } from 'lucide-react';
 import Navbar from '@/components/psytix/Navbar';
 import Footer from '@/components/psytix/Footer';
 import { sendLeadToTelegram } from '@/lib/telegram';
@@ -109,11 +109,80 @@ const DiplomaModal = ({ images, onClose }: { images: string[]; onClose: () => vo
   );
 };
 
+const bookPages = [
+  '/book-pages/page-0.jpg',
+  '/book-pages/page-1.jpg',
+  '/book-pages/page-2.jpg',
+  '/book-pages/page-3.jpg',
+  '/book-pages/page-4.jpg',
+  '/book-pages/page-5.jpg',
+];
+
+const BookViewer = ({ onClose, onBuy }: { onClose: () => void; onBuy: () => void }) => {
+  const [page, setPage] = useState(0);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="relative max-w-lg w-full max-h-[90vh] flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute -top-2 -right-2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="w-full overflow-hidden rounded-xl bg-white shadow-2xl">
+          <img src={bookPages[page]} alt={page === 0 ? 'Обложка книги' : `Страница ${page}`} className="w-full h-auto max-h-[70vh] object-contain" />
+        </div>
+
+        <div className="flex items-center gap-4 mt-4">
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            className="w-10 h-10 rounded-full bg-background/60 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors disabled:opacity-30"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-sm text-muted-foreground">{page === 0 ? 'Обложка' : `${page} / ${bookPages.length - 1}`}</span>
+          <button
+            onClick={() => setPage((p) => Math.min(bookPages.length - 1, p + 1))}
+            disabled={page === bookPages.length - 1}
+            className="w-10 h-10 rounded-full bg-background/60 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors disabled:opacity-30"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        <button
+          onClick={() => { onClose(); onBuy(); }}
+          className="mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-primary-foreground gradient-primary shadow-glow-sm hover:scale-105 transition-transform"
+        >
+          <ShoppingCart className="w-4 h-4" />
+          Купить книгу
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const Specialist = () => {
   const [diplomaImages, setDiplomaImages] = useState<string[] | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', messenger: '' as '' | 'telegram' | 'max', messengerContact: '', comment: '' });
+  const [bookViewerOpen, setBookViewerOpen] = useState(false);
+  const [bookBuyOpen, setBookBuyOpen] = useState(false);
+  const [bookBuySubmitted, setBookBuySubmitted] = useState(false);
+  const [bookForm, setBookForm] = useState({ name: '', phone: '', email: '', messenger: '' as '' | 'telegram' | 'max', messengerContact: '' });
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,6 +197,20 @@ const Specialist = () => {
     });
     setSubmitted(true);
     setFormOpen(false);
+  };
+
+  const handleBookBuy = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendLeadToTelegram({
+      name: bookForm.name,
+      email: bookForm.email,
+      phone: bookForm.phone || undefined,
+      messenger: bookForm.messenger === 'telegram' ? 'Telegram' : bookForm.messenger === 'max' ? 'MAX' : undefined,
+      messengerContact: bookForm.messengerContact || undefined,
+      page: window.location.href,
+      button: 'Купить книгу — «Не убивайте любовь»',
+    });
+    setBookBuySubmitted(true);
   };
 
   return (
@@ -377,6 +460,49 @@ const Specialist = () => {
           </div>
         </motion.section>
 
+        {/* Book */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2"><BookMarked className="w-5 h-5 text-primary" />Книга автора</h2>
+          <div className="glass-card rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <div
+              className="shrink-0 cursor-pointer group"
+              onClick={() => setBookViewerOpen(true)}
+            >
+              <div className="w-40 rounded-xl overflow-hidden shadow-lg border border-border/30 group-hover:shadow-primary/20 group-hover:border-primary/40 transition-all group-hover:scale-105">
+                <img src="/book-pages/page-0.jpg" alt="Обложка книги «Не убивайте любовь»" className="w-full h-auto" />
+              </div>
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <button
+                onClick={() => setBookViewerOpen(true)}
+                className="text-xl font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
+              >
+                «Не убивайте любовь»
+              </button>
+              <p className="text-sm text-muted-foreground mt-1 mb-3">Мария Лозовая</p>
+              <p className="text-foreground/80 text-sm leading-relaxed mb-4">
+                Книга о любви, которая проживается сердцем. Две повести и стихи — о первой любви, о потерях, о том, что в каждом из нас живёт ребёнок, который верит в чудеса. Нажмите на обложку, чтобы прочитать первые страницы.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <button
+                  onClick={() => setBookViewerOpen(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Читать отрывок
+                </button>
+                <button
+                  onClick={() => setBookBuyOpen(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-primary-foreground gradient-primary shadow-glow-sm hover:scale-105 transition-transform"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Купить
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
         {/* Services */}
         <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16 space-y-8">
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2"><Brain className="w-5 h-5 text-primary" />Направления работы</h2>
@@ -476,6 +602,127 @@ const Specialist = () => {
       <AnimatePresence>
         {diplomaImages && (
           <DiplomaModal images={diplomaImages} onClose={() => setDiplomaImages(null)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {bookViewerOpen && (
+          <BookViewer onClose={() => setBookViewerOpen(false)} onBuy={() => setBookBuyOpen(true)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {bookBuyOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            onClick={() => setBookBuyOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-md w-full glass-card rounded-2xl p-6 md:p-8 border border-primary/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button onClick={() => setBookBuyOpen(false)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/60 border border-border flex items-center justify-center text-foreground hover:bg-background transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+
+              {bookBuySubmitted ? (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
+                  <CheckCircle2 className="w-12 h-12 text-green-400 mx-auto mb-3" />
+                  <p className="text-lg font-bold text-foreground mb-1">Заявка отправлена!</p>
+                  <p className="text-sm text-muted-foreground">Мы свяжемся с вами для оформления покупки</p>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="text-center mb-5">
+                    <ShoppingCart className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <h3 className="text-lg font-bold text-foreground">Купить книгу</h3>
+                    <p className="text-sm text-muted-foreground">«Не убивайте любовь» — Мария Лозовая</p>
+                  </div>
+                  <form onSubmit={handleBookBuy} className="space-y-3">
+                    <input
+                      type="text"
+                      placeholder="Ваше имя (необязательно)"
+                      value={bookForm.name}
+                      onChange={(e) => setBookForm({ ...bookForm, name: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Телефон (необязательно)"
+                      value={bookForm.phone}
+                      onChange={(e) => setBookForm({ ...bookForm, phone: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email (необязательно)"
+                      value={bookForm.email}
+                      onChange={(e) => setBookForm({ ...bookForm, email: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                    />
+
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Удобный канал связи</p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setBookForm({ ...bookForm, messenger: bookForm.messenger === 'telegram' ? '' : 'telegram', messengerContact: '' })}
+                          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${bookForm.messenger === 'telegram' ? 'border-[#29B6F6] bg-[#29B6F6]/10 text-[#29B6F6]' : 'border-border bg-background/40 text-muted-foreground hover:border-[#29B6F6]/50'}`}
+                        >
+                          <Send className="w-4 h-4" />
+                          Telegram
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setBookForm({ ...bookForm, messenger: bookForm.messenger === 'max' ? '' : 'max', messengerContact: '' })}
+                          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${bookForm.messenger === 'max' ? 'border-[#FF6F00] bg-[#FF6F00]/10 text-[#FF6F00]' : 'border-border bg-background/40 text-muted-foreground hover:border-[#FF6F00]/50'}`}
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          MAX
+                        </button>
+                      </div>
+                    </div>
+
+                    <AnimatePresence>
+                      {bookForm.messenger && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                          <input
+                            type="text"
+                            placeholder={bookForm.messenger === 'telegram' ? '@username или номер телефона' : 'Ссылка на профиль MAX'}
+                            value={bookForm.messengerContact}
+                            onChange={(e) => setBookForm({ ...bookForm, messengerContact: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setBookBuyOpen(false)}
+                        className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors"
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-primary-foreground gradient-primary shadow-glow-sm hover:scale-105 transition-transform"
+                      >
+                        Отправить заявку
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

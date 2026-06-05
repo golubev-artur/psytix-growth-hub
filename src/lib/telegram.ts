@@ -4,6 +4,7 @@ const TG_CHAT_ID = "-5294418961";
 interface LeadData {
   name: string;
   email: string;
+  phone?: string;
   interest?: string;
   comment?: string;
   page: string;
@@ -27,6 +28,7 @@ export function sendLeadToTelegram(data: LeadData): void {
     `📧 <b>Email:</b> ${data.email}`,
   ];
 
+  if (data.phone) lines.push(`📞 <b>Телефон:</b> ${data.phone}`);
   if (data.interest) lines.push(`💬 <b>Интерес:</b> ${data.interest}`);
   if (data.messenger) lines.push(`📲 <b>Мессенджер:</b> ${data.messenger}`);
   if (data.messengerContact) lines.push(`🔗 <b>Контакт:</b> ${data.messengerContact}`);
