@@ -6,12 +6,27 @@ import { Button } from "@/components/ui/button";
 
 const ValueCalculator = () => {
   const [revenue, setRevenue] = useState([500000]);
+  const [revenueInput, setRevenueInput] = useState('500000');
   const [teamSize, setTeamSize] = useState([5]);
   const [convRate, setConvRate] = useState([15]);
 
   const revenueValue = revenue[0];
   const teamValue = teamSize[0];
   const convValue = convRate[0];
+
+  const handleRevenueSlider = (val: number[]) => {
+    setRevenue(val);
+    setRevenueInput(String(val[0]));
+  };
+
+  const handleRevenueInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '');
+    setRevenueInput(raw);
+    const num = Number(raw);
+    if (num >= 0 && num <= 3000000000) {
+      setRevenue([num]);
+    }
+  };
 
   // Calculated improvements
   const convImprovement = convValue * 0.45;
@@ -50,16 +65,24 @@ const ValueCalculator = () => {
             {/* Inputs */}
             <div className="space-y-8">
               <div>
-                <div className="flex justify-between mb-3">
-                  <label className="text-sm font-medium text-foreground">Годовая выручка</label>
-                  <span className="text-sm font-bold text-primary">{formatCurrency(revenueValue)}</span>
+                <label className="text-sm font-medium text-foreground block mb-2">Годовой оборот</label>
+                <div className="flex items-center gap-2 mb-3">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={revenueInput}
+                    onChange={handleRevenueInput}
+                    className="flex-1 px-3 py-2 rounded-xl bg-background/60 border border-border text-sm font-bold text-foreground focus:outline-none focus:border-primary/50 text-right"
+                  />
+                  <span className="text-xs text-muted-foreground shrink-0">₽ / год</span>
                 </div>
+                <p className="text-xs text-primary mb-1 text-right">{formatCurrency(revenueValue)}</p>
                 <Slider
                   value={revenue}
-                  onValueChange={setRevenue}
-                  min={100000}
-                  max={10000000}
-                  step={100000}
+                  onValueChange={handleRevenueSlider}
+                  min={0}
+                  max={3000000000}
+                  step={1000000}
                   className="w-full"
                 />
               </div>
