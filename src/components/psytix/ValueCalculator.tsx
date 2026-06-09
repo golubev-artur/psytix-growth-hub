@@ -23,10 +23,12 @@ const ValueCalculator = () => {
   const [revenue, setRevenue] = useState([500000]);
   const [revenueInput, setRevenueInput] = useState('500000');
   const [teamSize, setTeamSize] = useState([5]);
+  const [avgSalary, setAvgSalary] = useState([80000]);
   const [convRate, setConvRate] = useState([15]);
 
   const revenueValue = revenue[0];
   const teamValue = teamSize[0];
+  const salaryValue = avgSalary[0];
   const convValue = convRate[0];
 
   const handleRevenueSlider = (val: number[]) => {
@@ -46,7 +48,7 @@ const ValueCalculator = () => {
   // Calculated improvements
   const convImprovement = convValue * 0.45;
   const revenueGain = revenueValue * (convImprovement / 100);
-  const productivityGain = teamValue * 120000; // per person/year
+  const productivityGain = teamValue * salaryValue * 12 * 0.15;
   const totalValue = revenueGain + productivityGain;
 
   const [tip, setTip] = useState<string | null>(null);
@@ -134,6 +136,27 @@ const ValueCalculator = () => {
               <div className="relative">
                 <div className="flex justify-between mb-3">
                   <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground">Средняя зарплата</label>
+                    <button type="button" onClick={() => setTip(tip === 'salary' ? null : 'salary')} className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-sm font-bold text-primary">{formatCurrency(salaryValue)}</span>
+                </div>
+                <Tooltip visible={tip === 'salary'} text="Средняя месячная зарплата одного сотрудника отдела продаж. Используется для расчёта экономии от роста продуктивности команды после обучения." />
+                <Slider
+                  value={avgSalary}
+                  onValueChange={setAvgSalary}
+                  min={20000}
+                  max={250000}
+                  step={5000}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="relative">
+                <div className="flex justify-between mb-3">
+                  <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-foreground">Текущая конверсия</label>
                     <button type="button" onClick={() => setTip(tip === 'conv' ? null : 'conv')} className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
                       <HelpCircle className="w-4 h-4" />
@@ -194,7 +217,7 @@ const ValueCalculator = () => {
                     {formatCurrency(totalValue)}
                   </p>
                   <p className="text-xs text-primary-foreground/60 mt-1">в год</p>
-                  <Tooltip visible={tip === 'r-total'} text="Общая ценность = доп. выручка + рост продуктивности команды (120 000 ₽ на сотрудника в год за счёт улучшения навыков коммуникации и переговоров)." />
+                  <Tooltip visible={tip === 'r-total'} text="Общая ценность = доп. выручка + рост продуктивности команды. Продуктивность рассчитывается как 15% от годового фонда оплаты труда (сотрудники × зарплата × 12 мес. × 15%)." />
                 </div>
               </div>
 
