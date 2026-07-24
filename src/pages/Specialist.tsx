@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle, ShoppingCart, BookMarked } from 'lucide-react';
+import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle, ShoppingCart, BookMarked, Trophy } from 'lucide-react';
 import Navbar from '@/components/psytix/Navbar';
 import Footer from '@/components/psytix/Footer';
 import { sendLeadToTelegram } from '@/lib/telegram';
@@ -58,6 +58,14 @@ const familyTopics = [
   'Проблемы в супружеских отношениях',
   'Трудности в детско-родительских отношениях',
   'Эмоциональные и психологические проблемы',
+];
+
+const sportTopics = [
+  'Снижение предстартовой тревожности и управление стрессом',
+  'Проработка страхов поражения и соперника, укрепление уверенности и здоровой самооценки в спорте и жизни',
+  'Развитие концентрации, саморегуляции и визуализации',
+  'Постановка целей, поддержание мотивации и профилактика выгорания',
+  'Интеграция психологических техник в тренировочный процесс',
 ];
 
 const DiplomaModal = ({ images, onClose }: { images: string[]; onClose: () => void }) => {
@@ -548,6 +556,22 @@ const Specialist = () => {
             <p className="text-sm text-muted-foreground mb-4">Длительность 90 мин. Семейный интегрированный подход. Наладьте отношения и станьте важным поддерживающим и счастливым союзом друг для друга.</p>
             <ul className="space-y-2">
               {familyTopics.map((t) => (
+                <li key={t} className="flex items-start gap-2 text-sm text-foreground/80">
+                  <CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />{t}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Sport Psychology */}
+          <div className="glass-card rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Trophy className="w-5 h-5 text-amber-400" />
+              <h3 className="text-lg font-bold text-foreground">Психотерапия по спортивной психологии</h3>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">Работа с психологическими аспектами спортивной деятельности. Помощь спортсменам в достижении максимальной результативности через ментальную подготовку.</p>
+            <ul className="space-y-2">
+              {sportTopics.map((t) => (
                 <li key={t} className="flex items-start gap-2 text-sm text-foreground/80">
                   <CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />{t}
                 </li>
