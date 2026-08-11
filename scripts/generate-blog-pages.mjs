@@ -38,8 +38,31 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
+function escapeText(str) {
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Найти значение поля, идущего после данного slug в blogData.ts
+function fieldAfterSlug(slug, re) {
+  const i = blogSrc.indexOf(`slug: '${slug}'`);
+  if (i === -1) return null;
+  const m = blogSrc.slice(i).match(re);
+  return m ? m[1] : null;
+}
+
+// Тело статьи: h1 + excerpt + абзацы (mirrors BlogPost.tsx: content.split("\n\n") -> <p>)
+function renderBody(title, excerpt, content) {
+  const paras = content
+    .split("\n\n")
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${escapeText(p)}</p>`)
+    .join("\n");
+  return `<article><h1>${escapeText(title)}</h1>\n<p>${escapeText(excerpt)}</p>\n${paras}</article>`;
+}
+
 for (const post of posts) {
-  const fullTitle = `${post.title} — Psytix`;
+  const fullTitle = `${post.title} - Psytix`;
   const url = `${SITE}/blog/${post.category}/${post.slug}`;
   const safeTitle = escapeHtml(fullTitle);
   const safeDesc = escapeHtml(post.excerpt);
@@ -81,6 +104,60 @@ for (const post of posts) {
     /<meta name="twitter:description" content="[^"]*"\s*\/?>/,
     `<meta name="twitter:description" content="${safeDesc}" />`
   );
+
+  // ── Данные поста для тела и разметки ──
+  const content = fieldAfterSlug(post.slug, /content:\s*`([\s\S]*?)`\s*,/);
+  const date = fieldAfterSlug(post.slug, /date:\s*'([^']+)'/) || "";
+  const imgField = fieldAfterSlug(post.slug, /image:\s*'([^']+)'/);
+  const img = imgField ? `${SITE}${imgField}` : `${SITE}/og-image.png`;
+  const author = post.category === "psy" ? "Лозовая Мария Александровна" : "Голубев Артур Артурович";
+
+  // og:image — заменяем дефолт на картинку поста (без дублей)
+  html = html.replace(
+    /<meta property="og:image" content="[^"]*"\s*\/?>/,
+    () => `<meta property="og:image" content="${img}" />`
+  );
+
+  // Тело статьи в #root (бот видит полный текст без JS)
+  if (content) {
+    html = html.replace(
+      '<div id="root"></div>',
+      () => `<div id="root">${renderBody(post.title, post.excerpt, content)}</div>`
+    );
+  } else {
+    console.warn(`  ! Нет content для ${post.slug} — тело не пререндерено`);
+  }
+
+  // Article + BreadcrumbList schema (в статике их не было — bot видел 0)
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: date,
+    url,
+    image: img,
+    publisher: {
+      "@type": "Organization",
+      name: "Psytix",
+      logo: { "@type": "ImageObject", url: `${SITE}/favicon.svg` },
+    },
+    author: { "@type": "Person", name: author },
+  };
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Блог", item: `${SITE}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: url },
+    ],
+  };
+  const headExtra =
+    `  <link rel="canonical" href="${url}" />\n` +
+    `  <script type="application/ld+json">${JSON.stringify(articleSchema)}</script>\n` +
+    `  <script type="application/ld+json">${JSON.stringify(breadcrumb)}</script>\n  `;
+  html = html.replace("</head>", () => headExtra + "</head>");
 
   const dir = path.join(DIST, "blog", post.category, post.slug);
   fs.mkdirSync(dir, { recursive: true });
