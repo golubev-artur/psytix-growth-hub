@@ -73,7 +73,23 @@ export interface BlogPost {
 1. `src/data/blogData.ts` — сам пост
 2. `public/sitemap.xml` — `<url><loc>https://psytix.ru/blog/{psy|sal}/SLUG</loc>...` перед `</urlset>`, `priority 0.6`
 
+Пункт 2 больше не обязателен: `sitemap.xml` в `dist/` собирается на билде из `blogData.ts` и `courses.ts` (см. «Статика и SEO»). Файл в `public/` остался только чтобы не ломать скрипт автопубликации — его содержимое всё равно перезаписывается.
+
 Коммит: `Блог: [название поста]`, затем `git push origin main` (скрипт psytix пушит изнутри промпта, в отличие от консалтинга).
+
+---
+
+## Статика и SEO
+
+`scripts/generate-static-pages.mjs` (запускается из `npm run build` после `vite build`) собирает из `dist/index.html` статические страницы для **всех** маршрутов SPA: `/`, `/blog`, `/reviews`, `/mariyalozovaya`, `/arturgolubev`, `/privacy`, 16 `/module/:id` и 75 постов.
+
+Зачем: GitHub Pages отдаёт неизвестный путь как `404.html` со **статусом 404** — SPA-редирект внутри него работает для человека, но такие URL не индексируются. Реальный `index.html` в каталоге маршрута решает это.
+
+Что кладётся в каждую страницу: `<title>`, `description`, OG/Twitter, `rel=canonical`, JSON-LD (Article / Course / FAQPage / BreadcrumbList / Organization / WebSite / Blog / Person) и текст страницы внутри `#root` — бот видит контент без выполнения JS, React перерисовывает его при гидратации.
+
+Там же генерируется `dist/sitemap.xml` — только индексируемые адреса (`/privacy` под `noindex` не попадает), `lastmod` постов берётся из их `date`.
+
+**Новый маршрут в `App.tsx` → добавь его в `staticRoutes` этого скрипта**, иначе страница уедет в 404 для поисковиков.
 
 ---
 
@@ -104,7 +120,11 @@ export interface BlogPost {
 
 Пока не переписано — не трогай `sendLeadToTelegram` «по мелочи» и **не копируй токен** в другие файлы, коммиты и сообщения.
 
-Формы, использующие `sendLeadToTelegram`: `ValueCalculator`, `QuizTest`, `AIChatAssistant`, `Footer`, `Specialist`, `Golubev`, `ModulePage`, `BlogPostModal`, `BlogPost`.
+3. **Длинная заявка может не дойти.** Текст уезжает в query-строку GET-запроса: ответы квиза + рекомендации дают URL в десятки килобайт, при том что лимит сообщения Telegram — 4096 символов. Лечится тем же прокси (POST с телом). Поведение зафиксировано тестом `src/test/telegram.test.ts`.
+
+**Валидация заявок.** `src/lib/leadContact.ts` — `hasContact()` + `NO_CONTACT_MESSAGE`. Каждая форма перед отправкой проверяет, что заполнено хотя бы одно контактное поле (email / телефон / мессенджер), иначе показывает toast и не шлёт заявку: лид без контакта бесполезен. Все контактные поля по-прежнему необязательные по отдельности — важно, чтобы было заполнено любое.
+
+Формы, использующие `sendLeadToTelegram`: `ValueCalculator`, `QuizTest`, `AIChatAssistant`, `Footer`, `Specialist`, `Golubev`, `ModulePage`, `BlogPostModal` (сейчас нигде не подключён), `BlogPost`. Отправка каждой из них покрыта тестами: `src/test/leadForms.test.tsx`, `src/test/pageForms.test.tsx`.
 
 Поля лида: `name`, `email`, `phone?`, `interest?`, `comment?`, `page`, `button`, `quizAnswers?`, `recommendations?`, `messenger?`, `messengerContact?`. Сообщение форматируется в HTML, время — по `Europe/Moscow`.
 

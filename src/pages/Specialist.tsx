@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Award, Heart, Brain, Baby, Users, MapPin, Clock, CheckCircle2, BookOpen, Star, X, ChevronLeft, ChevronRight, FileCheck, CalendarCheck, Send, MessageCircle, ShoppingCart, BookMarked, Trophy } from 'lucide-react';
 import Navbar from '@/components/psytix/Navbar';
 import Footer from '@/components/psytix/Footer';
+import { toast } from 'sonner';
 import { sendLeadToTelegram } from '@/lib/telegram';
+import { hasContact, NO_CONTACT_MESSAGE } from '@/lib/leadContact';
 
 const education = [
   { year: '2024', title: 'Московский институт психоанализа', desc: 'Магистратура по профилю «Клиническая психология»', diplomas: [] as string[] },
@@ -194,12 +196,16 @@ const Specialist = () => {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(form.email, form.messengerContact)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
-      comment: form.comment || undefined,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      comment: form.comment.trim() || undefined,
       messenger: form.messenger === 'telegram' ? 'Telegram' : form.messenger === 'max' ? 'MAX' : undefined,
-      messengerContact: form.messengerContact || undefined,
+      messengerContact: form.messengerContact.trim() || undefined,
       page: window.location.href,
       button: 'Записаться на бесплатную консультацию — Специалист',
     });
@@ -209,12 +215,16 @@ const Specialist = () => {
 
   const handleBookBuy = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(bookForm.email, bookForm.phone, bookForm.messengerContact)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: bookForm.name,
-      email: bookForm.email,
-      phone: bookForm.phone || undefined,
+      name: bookForm.name.trim(),
+      email: bookForm.email.trim(),
+      phone: bookForm.phone.trim() || undefined,
       messenger: bookForm.messenger === 'telegram' ? 'Telegram' : bookForm.messenger === 'max' ? 'MAX' : undefined,
-      messengerContact: bookForm.messengerContact || undefined,
+      messengerContact: bookForm.messengerContact.trim() || undefined,
       page: window.location.href,
       button: 'Купить книгу — «Не убивайте любовь»',
     });
@@ -385,7 +395,7 @@ const Specialist = () => {
                   />
                   <input
                     type="email"
-                    placeholder="Email (необязательно)"
+                    placeholder="Email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-background/60 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
@@ -393,7 +403,7 @@ const Specialist = () => {
 
                   {/* Messenger choice */}
                   <div>
-                    <p className="text-xs text-muted-foreground mb-2">Удобный канал связи (необязательно)</p>
+                    <p className="text-xs text-muted-foreground mb-2">Удобный канал связи — email или мессенджер</p>
                     <div className="flex gap-2">
                       <button
                         type="button"
@@ -692,7 +702,7 @@ const Specialist = () => {
                     />
 
                     <div>
-                      <p className="text-xs text-muted-foreground mb-2">Удобный канал связи</p>
+                      <p className="text-xs text-muted-foreground mb-2">Как с вами связаться — телефон, email или мессенджер</p>
                       <div className="flex gap-2">
                         <button
                           type="button"

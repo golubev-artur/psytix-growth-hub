@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -12,10 +13,13 @@ const Footer = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!hasContact(email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
       name: "—",
-      email,
+      email: email.trim(),
       page: window.location.href,
       button: "Footer → Начать (email)",
     });
@@ -51,7 +55,7 @@ const Footer = () => {
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
               <Input
                 type="email"
-                placeholder="Ваш email (необязательно)"
+                placeholder="Ваш email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 py-5 rounded-xl bg-background/80 border-border"

@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, TrendingUp, Sparkles, HelpCircle, X, Send, MessageCircle, CheckCircle2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
 
 const Tooltip = ({ text, visible }: { text: string; visible: boolean }) => (
   <AnimatePresence>
@@ -59,12 +61,19 @@ const ValueCalculator = () => {
 
   const handleRoiSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Без канала связи заявка бесполезна — менеджеру некуда ответить
+    if (!hasContact(roiForm.email, roiForm.phone, roiForm.messengerContact)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
+
     sendLeadToTelegram({
-      name: roiForm.name,
-      email: roiForm.email,
-      phone: roiForm.phone || undefined,
+      name: roiForm.name.trim(),
+      email: roiForm.email.trim(),
+      phone: roiForm.phone.trim() || undefined,
       messenger: roiForm.messenger === 'telegram' ? 'Telegram' : roiForm.messenger === 'max' ? 'MAX' : undefined,
-      messengerContact: roiForm.messengerContact || undefined,
+      messengerContact: roiForm.messengerContact.trim() || undefined,
       comment: `Оборот: ${formatCurrency(revenueValue)}, Команда: ${teamValue} чел., Зарплата: ${formatCurrency(salaryValue)}, Конверсия: ${convValue}%, Прогноз доп. выручки: ${formatCurrency(revenueGain)}, Общая ценность: ${formatCurrency(totalValue)}`,
       page: window.location.href,
       button: 'Получить ROI-отчёт — Калькулятор ценности',
@@ -287,6 +296,7 @@ const ValueCalculator = () => {
                   <form onSubmit={handleRoiSubmit} className="space-y-3">
                     <input
                       type="text"
+                      required
                       placeholder="Ваше имя"
                       value={roiForm.name}
                       onChange={(e) => setRoiForm({ ...roiForm, name: e.target.value })}

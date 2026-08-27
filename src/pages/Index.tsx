@@ -19,13 +19,13 @@ const Index = () => {
         <meta property="og:title" content="Psytix — Психология и продажи в одной системе" />
         <meta property="og:description" content="16 модулей с научной базой. Когнитивные искажения, эмоциональный интеллект, SPIN-продажи, переговоры и многое другое." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://psytix.ru" />
+        <meta property="og:url" content="https://psytix.ru/" />
         <meta property="og:image" content="https://psytix.ru/og-image.png" />
         <meta property="og:site_name" content="Psytix" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Psytix — Психология и продажи в одной системе" />
         <meta name="twitter:description" content="16 модулей с научной базой для роста в психологии и продажах." />
-        <link rel="canonical" href="https://psytix.ru" />
+        <link rel="canonical" href="https://psytix.ru/" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",

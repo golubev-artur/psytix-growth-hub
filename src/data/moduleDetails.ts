@@ -14,7 +14,7 @@ export interface ProgressPoint {
 }
 
 export interface ModuleDetail {
-  id: string;
+  id?: string;
   fullDescription: string;
   whoIsFor: string[];
   whatYouGet: string[];

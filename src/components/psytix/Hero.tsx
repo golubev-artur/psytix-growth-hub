@@ -126,6 +126,7 @@ const Hero = () => {
             className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
           >
             <span className="gradient-text">Psytix</span>
+            <span className="sr-only"> — обучение психологии и продажам</span>
           </motion.h1>
 
           {/* Typewriter подзаголовок */}

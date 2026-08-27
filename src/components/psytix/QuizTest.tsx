@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { quizQuestions, psychologyBlocks, salesBlocks } from "@/data/courses";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
 
 const QuizTest = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -17,6 +18,10 @@ const QuizTest = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const handleAnswer = (optionIndex: number) => {
+    // Переключение вопроса отложено на 300 мс: без этой защиты второй клик
+    // за это время увеличивал счётчик дважды и ронял квиз на несуществующем вопросе
+    if (answers.length > currentQuestion) return;
+
     const newAnswers = [...answers, optionIndex];
     setAnswers(newAnswers);
 
@@ -52,12 +57,17 @@ const QuizTest = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!hasContact(form.email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
+
     const summary = getQuizSummary();
     const recs = getRecommendations();
 
     sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
+      name: form.name.trim(),
+      email: form.email.trim(),
       page: window.location.href,
       button: "Квиз → Начать обучение",
       quizAnswers: summary.map((s, i) => `   ${i + 1}. ${s.question}\n      → ${s.answer}`).join("\n"),

@@ -47,7 +47,7 @@ const BlogSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Блог</h2>
+          <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-4">Блог<span className="sr-only"> Psytix — статьи по психологии и продажам</span></h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Исследования, кейсы и практические инсайты на стыке психологии и продаж
           </p>

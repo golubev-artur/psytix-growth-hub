@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { sendLeadToTelegram } from '@/lib/telegram';
+import { hasContact, NO_CONTACT_MESSAGE } from '@/lib/leadContact';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -103,10 +104,14 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(form.email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
-      interest: form.interest,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      interest: form.interest.trim(),
       page: window.location.href,
       button: `Начать обучение — статья «${postTitle}»`,
     });
@@ -133,7 +138,7 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
         </div>
         <div>
           <label className="block text-xs text-muted-foreground mb-1">Email</label>
-          <Input type="email" placeholder="Email (необязательно)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="bg-background/50 border-border/50 focus:border-primary/50" />
+          <Input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="bg-background/50 border-border/50 focus:border-primary/50" />
         </div>
       </div>
       <div>
