@@ -1,6 +1,8 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
 import { motion } from "framer-motion";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -44,10 +46,14 @@ const ModulePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(formData.email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: formData.name,
-      email: formData.email,
-      comment: formData.comment,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      comment: formData.comment.trim(),
       page: window.location.href,
       button: `Начать обучение — ${course?.title ?? id}`,
     });
@@ -175,7 +181,7 @@ const ModulePage = () => {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
               <Input
-                placeholder="Email (необязательно)"
+                placeholder="Email *"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}

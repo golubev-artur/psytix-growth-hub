@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { psychologyBlocks, salesBlocks } from "@/data/courses";
 import { blogPosts } from "@/data/blogData";
 import { sendLeadToTelegram } from "@/lib/telegram";
+import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
 
 interface Message {
   id: number;
@@ -121,10 +122,14 @@ const LeadFormInChat = ({ defaultInterest, onSuccess }: { defaultInterest: strin
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(form.email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
-      interest: form.interest,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      interest: form.interest.trim(),
       page: window.location.href,
       button: "AI-чат → Оставить заявку",
     });

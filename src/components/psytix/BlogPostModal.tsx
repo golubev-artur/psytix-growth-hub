@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { sendLeadToTelegram } from '@/lib/telegram';
+import { hasContact, NO_CONTACT_MESSAGE } from '@/lib/leadContact';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, BookOpen, Send, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -121,10 +122,14 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasContact(form.email)) {
+      toast.error(NO_CONTACT_MESSAGE);
+      return;
+    }
     sendLeadToTelegram({
-      name: form.name,
-      email: form.email,
-      interest: form.interest,
+      name: form.name.trim(),
+      email: form.email.trim(),
+      interest: form.interest.trim(),
       page: window.location.href,
       button: `Начать обучение — модальное окно статьи «${postTitle}»`,
     });
@@ -168,7 +173,7 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
           <label className="block text-xs text-muted-foreground mb-1">Email</label>
           <Input
             type="email"
-            placeholder="Email (необязательно)"
+            placeholder="Email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="bg-background/50 border-border/50 focus:border-primary/50"
@@ -191,11 +196,8 @@ const LeadForm = ({ postTitle }: { postTitle: string }) => {
         type="submit"
         className="w-full gradient-primary text-primary-foreground shadow-glow-sm hover:scale-105 transition-transform"
       >
-        <>
-            <Send className="w-4 h-4 mr-2" />
-            Начать обучение
-          </>
-        )}
+        <Send className="w-4 h-4 mr-2" />
+        Начать обучение
       </Button>
     </motion.form>
   );
