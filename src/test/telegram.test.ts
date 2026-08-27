@@ -6,7 +6,7 @@ describe("sendLeadToTelegram", () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ ok: true }) });
     vi.stubGlobal("fetch", fetchMock);
   });
 
@@ -14,25 +14,25 @@ describe("sendLeadToTelegram", () => {
     vi.unstubAllGlobals();
   });
 
-  // Транспорт: GET на api.telegram.org, параметры лежат в query-строке
   function lastCall() {
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [rawUrl, init] = fetchMock.mock.calls[0];
-    const url = new URL(rawUrl as string);
-    return { url, init, params: url.searchParams };
+    const [url, init] = fetchMock.mock.calls[0];
+    return { url: url as string, init, body: JSON.parse(init.body as string) };
   }
 
-  it("дёргает sendMessage нужного бота", () => {
+  it("шлёт заявку POST-ом на серверный прокси, а не в Telegram напрямую", () => {
     sendLeadToTelegram({ name: "Иван", email: "i@example.com", page: "/", button: "Тест" });
 
     const { url, init } = lastCall();
-    expect(url.origin).toBe("https://api.telegram.org");
-    expect(url.pathname).toMatch(/^\/bot[^/]+\/sendMessage$/);
-    expect(init.mode).toBe("no-cors");
+    expect(url).toBe("https://api.golubev-consulting.ru/lead-psytix");
+    expect(url).not.toContain("api.telegram.org");
+    expect(init.method).toBe("POST");
+    expect(init.headers["Content-Type"]).toBe("application/json");
+    expect(init.keepalive).toBe(true);
   });
 
-  it("кладёт chat_id и текст заявки в параметры запроса", () => {
-    sendLeadToTelegram({
+  it("передаёт все поля заявки", () => {
+    const lead = {
       name: "Иван",
       email: "i@example.com",
       phone: "+79990000000",
@@ -42,61 +42,26 @@ describe("sendLeadToTelegram", () => {
       comment: "Комментарий",
       page: "https://psytix.ru/blog",
       button: "Начать обучение",
-    });
-
-    const { params } = lastCall();
-    expect(params.get("chat_id")).toBeTruthy();
-    expect(params.get("parse_mode")).toBe("HTML");
-
-    const text = params.get("text") ?? "";
-    for (const fragment of [
-      "Иван",
-      "i@example.com",
-      "+79990000000",
-      "Продажи",
-      "Telegram",
-      "@ivan",
-      "Комментарий",
-      "https://psytix.ru/blog",
-      "Начать обучение",
-    ]) {
-      expect(text).toContain(fragment);
-    }
-  });
-
-  it("добавляет ответы квиза и рекомендации, когда они переданы", () => {
-    sendLeadToTelegram({
-      name: "Иван",
-      email: "i@example.com",
-      page: "/",
-      button: "Квиз",
       quizAnswers: "1. Вопрос\n   → Ответ",
       recommendations: "• Когнитивные искажения",
-    });
+    };
+    sendLeadToTelegram(lead);
 
-    const text = lastCall().params.get("text") ?? "";
-    expect(text).toContain("Ответы квиза");
-    expect(text).toContain("→ Ответ");
-    expect(text).toContain("Рекомендованные модули");
-    expect(text).toContain("Когнитивные искажения");
+    expect(lastCall().body).toEqual(lead);
   });
 
-  // Известное ограничение: длинная заявка уезжает в query-строку целиком.
-  // Лимит сообщения Telegram — 4096 символов, длина URL тоже не бесконечна,
-  // поэтому такие заявки могут не дойти. Фиксируем поведение как есть —
-  // чинится переносом отправки на серверный прокси (см. CLAUDE.md).
-  it("передаёт длинную заявку целиком в URL", () => {
+  it("длинная заявка уходит целиком в теле запроса", () => {
     sendLeadToTelegram({
       name: "Иван",
       email: "i@example.com",
       page: "/",
       button: "Квиз",
-      quizAnswers: "я".repeat(5000),
+      quizAnswers: "я".repeat(20000),
     });
 
-    const { url, params } = lastCall();
-    expect((params.get("text") ?? "").length).toBeGreaterThan(4096);
-    expect(url.href.length).toBeGreaterThan(8000);
+    const { url, body } = lastCall();
+    expect(body.quizAnswers).toHaveLength(20000);
+    expect(url.length).toBeLessThan(100);
   });
 
   it("не роняет форму, если сеть недоступна", () => {

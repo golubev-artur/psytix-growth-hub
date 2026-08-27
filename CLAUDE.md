@@ -109,24 +109,22 @@ export interface BlogPost {
 
 ## Telegram
 
-⚠️ **Здесь схема отличается от консалтинга и это проблема.**
+**Лиды идут через серверный прокси, не напрямую.** `src/lib/telegram.ts` шлёт POST на `https://api.golubev-consulting.ru/lead-psytix`; сервер (`~/sites/golubev-consulting/client-api/server.js`) пересылает в Telegram.
 
-`src/lib/telegram.ts` содержит **захардкоженные `TG_BOT_TOKEN` и `TG_CHAT_ID`** и дёргает `api.telegram.org` напрямую из браузера (GET + `mode: 'no-cors'`, fire-and-forget).
+Причины ровно те же, что в консалтинге, плюс одна своя:
+1. `api.telegram.org` заблокирован у посетителей из РФ — прямой `fetch` из браузера не проходит.
+2. Токен бота не попадает в клиентский бандл.
+3. Длинная заявка из квиза (ответы + рекомендации) не влезала в query-строку GET-запроса.
 
-Два следствия:
+**Не переписывай на прямой вызов Telegram API** — заявки перестанут доходить.
 
-1. **Токен бота попадает в клиентский бандл** и публично доступен любому посетителю сайта. Любой может читать и слать сообщения от имени этого бота. Это стоит починить — перенести отправку на серверный прокси, как сделано в консалтинге (`api.golubev-consulting.ru/lead` → `client-api/server.js`), и отозвать текущий токен через @BotFather.
-2. **У посетителей из РФ заявки могут не доходить** — `api.telegram.org` заблокирован, а `no-cors` глушит ошибку, так что сбой не виден ни пользователю, ни в логах.
+Роут сервера лежит здесь же: `server/lead-psytix.route.cjs` — это копия того, что развёрнуто на сервере. Правки вносим тут, потом копируем на сервер и перезапускаем процесс. Он читает `PSYTIX_TG_BOT_TOKEN` и `PSYTIX_TG_CHAT_ID` из окружения, отдаёт CORS только для `https://psytix.ru`, экранирует HTML в полях, режет сообщение до 4000 символов и держит лимит 5 заявок с IP за 10 минут. Покрыт тестами `src/test/leadRoute.test.ts`.
 
-Пока не переписано — не трогай `sendLeadToTelegram` «по мелочи» и **не копируй токен** в другие файлы, коммиты и сообщения.
+**Валидация заявок.** `src/lib/leadContact.ts` — `hasContact()` + `NO_CONTACT_MESSAGE`. Каждая форма перед отправкой проверяет, что заполнено хотя бы одно контактное поле (email / телефон / мессенджер), иначе показывает toast и не шлёт заявку: лид без контакта бесполезен. Ту же проверку дублирует сервер.
 
-3. **Длинная заявка может не дойти.** Текст уезжает в query-строку GET-запроса: ответы квиза + рекомендации дают URL в десятки килобайт, при том что лимит сообщения Telegram — 4096 символов. Лечится тем же прокси (POST с телом). Поведение зафиксировано тестом `src/test/telegram.test.ts`.
+Формы, использующие `sendLeadToTelegram`: `ValueCalculator`, `QuizTest`, `AIChatAssistant`, `Footer`, `Specialist`, `Golubev`, `ModulePage`, `BlogPostModal` (сейчас нигде не подключён), `BlogPost`. Отправка каждой покрыта тестами: `src/test/leadForms.test.tsx`, `src/test/pageForms.test.tsx`.
 
-**Валидация заявок.** `src/lib/leadContact.ts` — `hasContact()` + `NO_CONTACT_MESSAGE`. Каждая форма перед отправкой проверяет, что заполнено хотя бы одно контактное поле (email / телефон / мессенджер), иначе показывает toast и не шлёт заявку: лид без контакта бесполезен. Все контактные поля по-прежнему необязательные по отдельности — важно, чтобы было заполнено любое.
-
-Формы, использующие `sendLeadToTelegram`: `ValueCalculator`, `QuizTest`, `AIChatAssistant`, `Footer`, `Specialist`, `Golubev`, `ModulePage`, `BlogPostModal` (сейчас нигде не подключён), `BlogPost`. Отправка каждой из них покрыта тестами: `src/test/leadForms.test.tsx`, `src/test/pageForms.test.tsx`.
-
-Поля лида: `name`, `email`, `phone?`, `interest?`, `comment?`, `page`, `button`, `quizAnswers?`, `recommendations?`, `messenger?`, `messengerContact?`. Сообщение форматируется в HTML, время — по `Europe/Moscow`.
+Поля лида: `name`, `email`, `phone?`, `interest?`, `comment?`, `page`, `button`, `quizAnswers?`, `recommendations?`, `messenger?`, `messengerContact?`. Сообщение форматируется на сервере в HTML, время — по `Europe/Moscow`.
 
 ---
 

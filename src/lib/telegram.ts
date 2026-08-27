@@ -1,7 +1,13 @@
-const TG_BOT_TOKEN = "8697543831:AAH2ZKA4EHnP78w-MPoShV5xRxmVppD_ZuY";
-const TG_CHAT_ID = "-5294418961";
+// Заявки уходят через серверный прокси, а не напрямую в Telegram.
+// Причины: api.telegram.org заблокирован у посетителей из РФ (прямой fetch
+// из браузера не проходит), токен бота не должен попадать в клиентский бандл,
+// а длинная заявка из квиза не влезала в query-строку GET-запроса.
+// Сервер — ~/sites/golubev-consulting/client-api/server.js,
+// готовый роут лежит в server/lead-psytix.route.cjs этого репозитория.
+// НЕ переписывай обратно на прямой вызов Telegram API — заявки перестанут доходить.
+const LEAD_ENDPOINT = "https://api.golubev-consulting.ru/lead-psytix";
 
-interface LeadData {
+export interface LeadData {
   name: string;
   email: string;
   phone?: string;
@@ -15,32 +21,17 @@ interface LeadData {
   messengerContact?: string;
 }
 
+/**
+ * Отправляет заявку fire-and-forget: формы показывают успех сразу,
+ * не дожидаясь ответа сервера — как и раньше. keepalive нужен, чтобы
+ * запрос пережил уход со страницы сразу после отправки.
+ * Текст сообщения собирает сервер, клиент шлёт только поля заявки.
+ */
 export function sendLeadToTelegram(data: LeadData): void {
-  const now = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" });
-
-  const lines = [
-    "🔔 <b>Новая заявка — psytix.ru</b>",
-    "",
-    `📍 <b>Страница:</b> ${data.page}`,
-    `🖱 <b>Кнопка:</b> ${data.button}`,
-    "",
-    `👤 <b>Имя:</b> ${data.name}`,
-    `📧 <b>Email:</b> ${data.email}`,
-  ];
-
-  if (data.phone) lines.push(`📞 <b>Телефон:</b> ${data.phone}`);
-  if (data.interest) lines.push(`💬 <b>Интерес:</b> ${data.interest}`);
-  if (data.messenger) lines.push(`📲 <b>Мессенджер:</b> ${data.messenger}`);
-  if (data.messengerContact) lines.push(`🔗 <b>Контакт:</b> ${data.messengerContact}`);
-  if (data.comment) lines.push(`📝 <b>Комментарий:</b> ${data.comment}`);
-  if (data.quizAnswers) lines.push("", `📋 <b>Ответы квиза:</b>\n${data.quizAnswers}`);
-  if (data.recommendations) lines.push("", `🎯 <b>Рекомендованные модули:</b>\n${data.recommendations}`);
-
-  lines.push("", `⏰ ${now}`);
-
-  const text = lines.join("\n");
-  const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${encodeURIComponent(TG_CHAT_ID)}&text=${encodeURIComponent(text)}&parse_mode=HTML`;
-
-  // GET-запрос — не требует CORS preflight, fire-and-forget
-  fetch(url, { mode: "no-cors" }).catch(() => {});
+  fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+    keepalive: true,
+  }).catch(() => {});
 }
