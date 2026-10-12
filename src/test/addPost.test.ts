@@ -4,8 +4,9 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
-// Скрипт добавления готового поста: запускаем как настоящий CLI, но с копией
-// blogData.ts, чтобы тесты не трогали реальные данные.
+// Скрипт добавления готового поста запускаем как настоящий CLI, но на копии
+// данных во временной папке (PSYTIX_ROOT): тесты идут параллельно, и правка
+// настоящего blogData.ts, даже с откатом, ломала бы соседние файлы тестов.
 
 const REPO = process.cwd();
 const SCRIPT = path.join(REPO, "scripts/add-post.mjs");
@@ -30,11 +31,18 @@ function validPost(overrides: Record<string, unknown> = {}) {
   };
 }
 
-/** Запускает скрипт в песочнице и возвращает код выхода, вывод и новый blogData. */
+/** Запускает скрипт на копии данных и возвращает код выхода, вывод и новый blogData. */
 function run(category: string, post: unknown) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "addpost-"));
-  const backup = fs.readFileSync(BLOG_DATA, "utf-8");
-  const postFile = path.join(dir, "post.json");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "addpost-"));
+  fs.mkdirSync(path.join(root, "src/data"), { recursive: true });
+  fs.mkdirSync(path.join(root, "content-plan"), { recursive: true });
+
+  const original = fs.readFileSync(BLOG_DATA, "utf-8");
+  const copy = path.join(root, "src/data/blogData.ts");
+  fs.writeFileSync(copy, original);
+  fs.writeFileSync(path.join(root, "content-plan/state.json"), '{"psy": 0, "sal": 0}\n');
+
+  const postFile = path.join(root, "post.json");
   fs.writeFileSync(postFile, JSON.stringify(post));
 
   let status = 0;
@@ -43,6 +51,7 @@ function run(category: string, post: unknown) {
     output = execFileSync("node", [SCRIPT, category, postFile], {
       cwd: REPO,
       encoding: "utf-8",
+      env: { ...process.env, PSYTIX_ROOT: root },
       stdio: ["ignore", "pipe", "pipe"],
     });
   } catch (error) {
@@ -51,11 +60,10 @@ function run(category: string, post: unknown) {
     output = `${e.stdout ?? ""}${e.stderr ?? ""}`;
   }
 
-  const result = fs.readFileSync(BLOG_DATA, "utf-8");
-  fs.writeFileSync(BLOG_DATA, backup); // всегда возвращаем файл как был
-  fs.rmSync(dir, { recursive: true, force: true });
+  const result = fs.readFileSync(copy, "utf-8");
+  fs.rmSync(root, { recursive: true, force: true });
 
-  return { status, output, blogData: result, unchanged: result === backup };
+  return { status, output, blogData: result, unchanged: result === original };
 }
 
 describe("scripts/add-post.mjs", () => {
@@ -117,6 +125,12 @@ describe("scripts/add-post.mjs", () => {
     const { status, unchanged } = run("sal", post);
     expect(status).toBe(1);
     expect(unchanged).toBe(true);
+  });
+
+  it("не трогает настоящий blogData.ts", () => {
+    const before = fs.readFileSync(BLOG_DATA, "utf-8");
+    run("sal", validPost());
+    expect(fs.readFileSync(BLOG_DATA, "utf-8")).toBe(before);
   });
 
   it("требует категорию psy или sal", () => {

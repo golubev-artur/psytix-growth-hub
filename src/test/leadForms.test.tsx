@@ -78,21 +78,29 @@ describe("Форма ROI-отчёта в калькуляторе", () => {
 // ─── Квиз ────────────────────────────────────────────────────────────────────
 
 describe("Форма после квиза", () => {
-  // Между вопросами компонент ждёт 300 мс перед переключением экрана
+  // Между вопросами компонент ждёт 300 мс и проигрывает анимацию смены экрана.
+  // Ждём не конкретную кнопку, а номер следующего вопроса: старый экран может
+  // ещё доигрывать exit-анимацию, а под нагрузкой полного прогона - дольше секунды.
   async function passQuiz() {
     const { container } = render(<QuizTest />);
     for (let guard = 0; guard < 20; guard += 1) {
+      if (screen.queryByRole("button", { name: /Начать обучение/i })) return;
+
+      const current = Number(container.textContent?.match(/Вопрос (\d+) из/)?.[1] ?? 0);
       const options = container.querySelectorAll<HTMLButtonElement>("button.text-left");
       if (!options.length) break;
       fireEvent.click(options[0]);
-      await waitFor(() => {
-        const advanced =
-          screen.queryByRole("button", { name: /Начать обучение/i }) ||
-          container.querySelectorAll("button.text-left")[0] !== options[0];
-        expect(advanced).toBeTruthy();
-      });
-      if (screen.queryByRole("button", { name: /Начать обучение/i })) return;
+
+      await waitFor(
+        () => {
+          const finished = screen.queryByRole("button", { name: /Начать обучение/i });
+          const advanced = (container.textContent ?? "").includes(`Вопрос ${current + 1} из`);
+          expect(Boolean(finished) || advanced).toBe(true);
+        },
+        { timeout: 3000 }
+      );
     }
+    if (screen.queryByRole("button", { name: /Начать обучение/i })) return;
     throw new Error("Квиз не дошёл до экрана с рекомендациями");
   }
 
@@ -119,7 +127,7 @@ describe("Форма после квиза", () => {
     fireEvent.click(options[1]);
 
     // Текст разбит на несколько узлов — сверяем по содержимому секции
-    await waitFor(() => expect(container.textContent).toContain("Вопрос 2 из"));
+    await waitFor(() => expect(container.textContent).toContain("Вопрос 2 из"), { timeout: 3000 });
     expect(container.textContent).not.toContain("Вопрос 3 из");
   });
 

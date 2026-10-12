@@ -41,7 +41,8 @@ import {
 } from "./post-utils.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(HERE, "..");
+// PSYTIX_ROOT позволяет тестам работать на копии данных, не трогая настоящий blogData.ts
+const ROOT = process.env.PSYTIX_ROOT ? path.resolve(process.env.PSYTIX_ROOT) : path.resolve(HERE, "..");
 const BLOG_DATA = path.join(ROOT, "src/data/blogData.ts");
 const STATE_FILE = path.join(ROOT, "content-plan/state.json");
 
