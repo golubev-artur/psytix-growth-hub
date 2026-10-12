@@ -125,6 +125,18 @@ describe("проверки правил", () => {
     expect(validatePost(makePost({ content: long })).join(" ")).toContain("вне диапазона");
   });
 
+  it("ловит markdown-заголовки и жирный текст", () => {
+    const heading = makePost({ content: `## Что происходит в мозге\n\n${makePost().content}` });
+    expect(validatePost(heading).join(" ")).toContain("markdown");
+    const bold = makePost({ content: `${makePost().content} **важно**` });
+    expect(validatePost(bold).join(" ")).toContain("markdown");
+  });
+
+  it("не путает решётку внутри строки с заголовком", () => {
+    const post = makePost({ content: `${makePost().content} задача #3 в списке` });
+    expect(validatePost(post)).toEqual([]);
+  });
+
   it("требует 5-7 точек на графике", () => {
     const few = makePost({ chartPoints: [{ name: "a", value: 1 }] });
     expect(validatePost(few).join(" ")).toContain("точек на графике");

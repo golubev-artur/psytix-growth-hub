@@ -106,6 +106,12 @@ export function validatePost(post) {
     if (lower.includes(phrase)) problems.push(`запрещённый оборот «${phrase}»`);
   }
 
+  // Страница поста выводит текст простыми абзацами (content.split("\n\n") -> <p>),
+  // markdown там не рендерится: «## Заголовок» или «**жирный**» показались бы как есть
+  if (/^\s*#{1,6}\s/m.test(post.content) || /\*\*[^*]+\*\*/.test(post.content)) {
+    problems.push("markdown-разметка в тексте: страница выводит только простые абзацы");
+  }
+
   if (post.chartPoints.length < 5 || post.chartPoints.length > 7) {
     problems.push(`точек на графике ${post.chartPoints.length}, нужно 5-7`);
   }
