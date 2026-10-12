@@ -1,0 +1,124 @@
+name: Автопубликация постов
+
+# Только ручной запуск. Основная плановая выкладка идёт через расписание
+# Claude Code (пн/ср/пт) по подписке и не требует ключа - см. CLAUDE.md.
+# Этот workflow - запасной путь: пишет текст через API и требует секрет
+# ANTHROPIC_API_KEY. Без ключа cron падал бы каждое утро, поэтому его нет.
+on:
+  workflow_dispatch:
+    inputs:
+      categories:
+        description: "Что публиковать: both, psy или sal"
+        required: false
+        default: both
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Настроить git
+        run: |
+          git config user.name "psytix-bot"
+          git config user.email "golubev.artur2021@gmail.com"
+
+      - name: Публикация
+        id: publish
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CATEGORIES: ${{ inputs.categories || 'both' }}
+        run: |
+          set -u
+          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+            echo "::error::Не задан секрет ANTHROPIC_API_KEY"
+            exit 1
+          fi
+
+          case "$CATEGORIES" in
+            psy) list="psy" ;;
+            sal) list="sal" ;;
+            *)   list="psy sal" ;;
+          esac
+
+          published=false
+          failed=false
+
+          for cat in $list; do
+            echo "::group::Категория $cat"
+
+            node scripts/publish-post.mjs "$cat"
+            code=$?
+
+            if [ "$code" -ne 0 ]; then
+              git checkout -- src/data/blogData.ts content-plan/state.json || true
+              if [ "$code" -eq 2 ]; then
+                echo "::error::Контент-план $cat исчерпан - допишите темы в content-plan/$cat.txt"
+              else
+                echo "::error::Не удалось сгенерировать пост категории $cat"
+              fi
+              failed=true
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Пост не уходит в репозиторий, пока сайт с ним не собрался
+            if ! npm run build; then
+              echo "::error::Сборка сломалась на новом посте $cat - откатываю"
+              git checkout -- src/data/blogData.ts content-plan/state.json
+              rm -f .post-title
+              failed=true
+              echo "::endgroup::"
+              continue
+            fi
+
+            title=$(cat .post-title)
+            rm -f .post-title
+            git add src/data/blogData.ts content-plan/state.json
+            git commit -m "Блог: $title"
+            published=true
+            echo "::endgroup::"
+          done
+
+          echo "published=$published" >> "$GITHUB_OUTPUT"
+
+          if [ "$published" = "true" ]; then
+            for attempt in 1 2 3 4; do
+              if git push origin HEAD:main; then
+                break
+              fi
+              if [ "$attempt" = "4" ]; then
+                echo "::error::Не удалось запушить посты"
+                exit 1
+              fi
+              sleep $((2 ** attempt))
+              git pull --rebase origin main
+            done
+          fi
+
+          if [ "$failed" = "true" ]; then
+            exit 1
+          fi
+
+  deploy:
+    needs: publish
+    if: needs.publish.outputs.published == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
