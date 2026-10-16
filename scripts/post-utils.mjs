@@ -25,15 +25,61 @@ const TRANSLIT = {
   ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
 };
 
-/** Все посты из blogData.ts: id, слаг, категория - в порядке следования в файле. */
+/** Все посты из blogData.ts: id, слаг, категория и дата - в порядке следования в файле. */
 export function parsePosts(blogSrc) {
   const posts = [];
   const re = /id: '([^']+)',\s*\n\s*slug: '([^']+)',\s*\n\s*category: '([^']+)'/g;
-  let m;
-  while ((m = re.exec(blogSrc)) !== null) {
-    posts.push({ id: m[1], slug: m[2], category: m[3] });
-  }
+  const matches = [...blogSrc.matchAll(re)];
+  matches.forEach((m, i) => {
+    // Дата лежит дальше в той же записи, после длинного content
+    const end = i + 1 < matches.length ? matches[i + 1].index : blogSrc.length;
+    const date = blogSrc.slice(m.index, end).match(/date: '([\d-]+)'/);
+    posts.push({ id: m[1], slug: m[2], category: m[3], date: date ? date[1] : "" });
+  });
   return posts;
+}
+
+// ─── График выкладки ──────────────────────────────────────────────────────────
+
+/** Пн, ср, пт (getUTCDay: 0 - воскресенье). */
+export const SCHEDULE_DAYS = [1, 3, 5];
+/** Час выкладки по Москве. */
+export const SCHEDULE_HOUR_MSK = 7;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const MSK_OFFSET_MS = 3 * 60 * 60 * 1000; // в России нет перехода на летнее время
+
+/**
+ * Даты (YYYY-MM-DD, по Москве) плановых выпусков, которые уже должны были выйти
+ * к моменту now. Выпуск считается наступившим через graceHours после 07:00 МСК
+ * своего дня. Самые свежие - первыми.
+ */
+export function dueSlots(now = Date.now(), { graceHours = 0, lookbackDays = 21 } = {}) {
+  const mskNow = now + MSK_OFFSET_MS;
+  const todayStart = Math.floor(mskNow / DAY_MS) * DAY_MS;
+  const slots = [];
+
+  for (let d = 0; d <= lookbackDays; d += 1) {
+    const dayStart = todayStart - d * DAY_MS;
+    const weekday = new Date(dayStart).getUTCDay();
+    if (!SCHEDULE_DAYS.includes(weekday)) continue;
+
+    const slotTime = dayStart + (SCHEDULE_HOUR_MSK + graceHours) * 60 * 60 * 1000;
+    if (slotTime <= mskNow) slots.push(new Date(dayStart).toISOString().slice(0, 10));
+  }
+  return slots;
+}
+
+/** Сколько плановых выпусков прошло после последнего поста категории. */
+export function missedSlots(lastPostDate, slots) {
+  return slots.filter((slot) => !lastPostDate || slot > lastPostDate).length;
+}
+
+/** Дата последнего поста категории (по полю date, а не по порядку в файле). */
+export function lastPostDate(posts, category) {
+  return posts
+    .filter((p) => p.category === category && p.date)
+    .reduce((max, p) => (p.date > max ? p.date : max), "");
 }
 
 /** Следующий id в категории: максимальный существующий + 1. */
