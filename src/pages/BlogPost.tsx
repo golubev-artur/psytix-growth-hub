@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { sendLeadToTelegram } from '@/lib/telegram';
 import { hasContact, NO_CONTACT_MESSAGE } from '@/lib/leadContact';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -32,6 +32,10 @@ const CHART_COLORS = ['#7C3AED', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
 
 const FullChart = ({ post }: { post: BlogPostType }) => {
   const keys = Object.keys(post.chartData[0]).filter((k) => k !== 'name');
+  // id градиента не строим из названия метрики: пробелы, запятые и точки в нём
+  // ломают ссылку url(#...), и браузер заливает график чёрным. useId - чтобы
+  // id не совпадали, если на странице несколько графиков.
+  const gradPrefix = `fullgrad-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const tooltipStyle = {
     contentStyle: {
       background: 'rgba(15,15,30,0.95)',
@@ -84,14 +88,14 @@ const FullChart = ({ post }: { post: BlogPostType }) => {
         {keys.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />}
         <defs>
           {keys.map((key, i) => (
-            <linearGradient key={key} id={`fullgrad-${key}`} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient key={key} id={`${gradPrefix}-${i}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.5} />
               <stop offset="95%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.0} />
             </linearGradient>
           ))}
         </defs>
         {keys.map((key, i) => (
-          <Area key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} fill={`url(#fullgrad-${key})`} />
+          <Area key={key} type="monotone" dataKey={key} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2.5} fill={`url(#${gradPrefix}-${i})`} />
         ))}
       </AreaChart>
     </ResponsiveContainer>

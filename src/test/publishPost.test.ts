@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-// @ts-expect-error — утилиты автопубликации без типов, это обычный .mjs для Node
 import * as utils from "../../scripts/post-utils.mjs";
 
 const {

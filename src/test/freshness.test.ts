@@ -3,7 +3,6 @@ import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
-// @ts-expect-error — утилиты автопубликации без типов, это обычный .mjs для Node
 import * as utils from "../../scripts/post-utils.mjs";
 
 const { dueSlots, missedSlots, lastPostDate, parsePosts } = utils;
