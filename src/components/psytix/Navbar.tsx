@@ -60,7 +60,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav aria-label="Основная навигация" className="hidden md:flex items-center gap-6">
           {anchorItems.map((item) => (
             <button
               key={item.href}
@@ -79,6 +79,16 @@ const Navbar = () => {
             }`}
           >
             Блог
+          </Link>
+          <Link
+            to="/reviews"
+            className={`text-sm transition-colors ${
+              location.pathname === "/reviews"
+                ? "text-primary font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Отзывы
           </Link>
           <Button
             size="sm"
@@ -123,6 +133,13 @@ const Navbar = () => {
               className="text-sm text-muted-foreground hover:text-foreground py-2"
             >
               Блог
+            </Link>
+            <Link
+              to="/reviews"
+              onClick={() => setMobileOpen(false)}
+              className="text-sm text-muted-foreground hover:text-foreground py-2"
+            >
+              Отзывы
             </Link>
             <Button
               className="gradient-primary text-primary-foreground rounded-lg w-full mt-2"

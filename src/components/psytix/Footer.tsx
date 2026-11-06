@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { sendLeadToTelegram } from "@/lib/telegram";
 import { hasContact, NO_CONTACT_MESSAGE } from "@/lib/leadContact";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -81,26 +82,23 @@ const Footer = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                О проекте
-              </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Модули
-              </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Контакты
-              </a>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                <Mail className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                <MessageCircle className="w-4 h-4" />
-              </Button>
-            </div>
+            <nav aria-label="Навигация подвала" className="flex items-center gap-6">
+              <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Блог
+              </Link>
+              <Link to="/reviews" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Отзывы
+              </Link>
+              <Link to="/mariyalozovaya" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Мария Лозовая
+              </Link>
+              <Link to="/arturgolubev" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Артур Голубев
+              </Link>
+              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Конфиденциальность
+              </Link>
+            </nav>
           </div>
         </div>
       </div>

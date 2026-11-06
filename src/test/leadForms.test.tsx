@@ -23,7 +23,7 @@ function lead() {
 
 describe("Форма в футере", () => {
   it("отправляет заявку с email", () => {
-    render(<Footer />);
+    render(<MemoryRouter><Footer /></MemoryRouter>);
     fireEvent.change(screen.getByPlaceholderText("Ваш email"), {
       target: { value: "  lead@example.com  " },
     });
@@ -37,7 +37,7 @@ describe("Форма в футере", () => {
   });
 
   it("не отправляет пустую форму и остаётся на месте", () => {
-    render(<Footer />);
+    render(<MemoryRouter><Footer /></MemoryRouter>);
     fireEvent.click(screen.getByRole("button", { name: /Начать/i }));
 
     expect(sendLeadToTelegram).not.toHaveBeenCalled();

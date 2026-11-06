@@ -39,9 +39,9 @@ const Blog = () => {
         })}</script>
       </Helmet>
       <Navbar />
-      <div className="pt-16">
+      <main className="pt-16">
         <BlogSection />
-      </div>
+      </main>
       <Footer />
     </div>
   );

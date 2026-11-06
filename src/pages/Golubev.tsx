@@ -120,7 +120,7 @@ const Golubev = () => {
         <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-16">
           <div className="shrink-0">
             <div className="w-56 h-72 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-2 border-primary/30 overflow-hidden flex items-center justify-center">
-              <img src="/golubev-photo.jpg" alt="Артур Голубев" className="w-full h-full object-cover object-top" />
+              <img src="/golubev-photo.jpg" alt="Артур Голубев — бизнес-консультант, эксперт по продажам" className="w-full h-full object-cover object-top" loading="lazy" />
             </div>
           </div>
           <div>

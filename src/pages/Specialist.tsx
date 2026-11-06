@@ -94,7 +94,7 @@ const DiplomaModal = ({ images, onClose }: { images: string[]; onClose: () => vo
         </button>
 
         <div className="w-full overflow-hidden rounded-xl bg-background/20 border border-border/30">
-          <img src={images[idx]} alt="Диплом" className="w-full h-auto max-h-[80vh] object-contain" />
+          <img src={images[idx]} alt={`Диплом Марии Лозовой ${idx + 1} из ${images.length}`} className="w-full h-auto max-h-[80vh] object-contain" />
         </div>
 
         {multi && (
@@ -151,7 +151,7 @@ const BookViewer = ({ onClose, onBuy }: { onClose: () => void; onBuy: () => void
         </button>
 
         <div className="w-full overflow-hidden rounded-xl bg-white shadow-2xl">
-          <img src={bookPages[page]} alt={page === 0 ? 'Обложка книги' : `Страница ${page}`} className="w-full h-auto max-h-[70vh] object-contain" />
+          <img src={bookPages[page]} alt={page === 0 ? 'Обложка книги «Не убивайте любовь»' : `Страница ${page} книги «Не убивайте любовь»`} className="w-full h-auto max-h-[70vh] object-contain" loading="lazy" />
         </div>
 
         <div className="flex items-center gap-4 mt-4">
@@ -325,7 +325,7 @@ const Specialist = () => {
         <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-16">
           <div className="shrink-0">
             <div className="w-56 h-56 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-2 border-primary/30 overflow-hidden flex items-center justify-center">
-              <img src="/specialist-photo.jpg" alt="Мария Лозовая" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex flex-col items-center justify-center text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>'; }} />
+              <img src="/specialist-photo.jpg" alt="Мария Лозовая — клинический психолог" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex flex-col items-center justify-center text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>'; }} />
             </div>
           </div>
           <div>
@@ -487,7 +487,7 @@ const Specialist = () => {
               onClick={() => setBookViewerOpen(true)}
             >
               <div className="w-40 rounded-xl overflow-hidden shadow-lg border border-border/30 group-hover:shadow-primary/20 group-hover:border-primary/40 transition-all group-hover:scale-105">
-                <img src="/book-pages/page-0.jpg" alt="Обложка книги «Не убивайте любовь»" className="w-full h-auto" />
+                <img src="/book-pages/page-0.jpg" alt="Обложка книги «Не убивайте любовь»" className="w-full h-auto" loading="lazy" />
               </div>
             </div>
             <div className="flex-1 text-center sm:text-left">

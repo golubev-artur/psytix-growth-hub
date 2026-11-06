@@ -100,6 +100,7 @@ const ModulePage = () => {
         })}</script>
       </Helmet>
       <Navbar />
+      <main>
 
       {/* Hero */}
       <section className="pt-28 pb-16 px-4 gradient-hero">
@@ -493,6 +494,7 @@ const ModulePage = () => {
 
       </div>
 
+      </main>
       <Footer />
     </div>
   );

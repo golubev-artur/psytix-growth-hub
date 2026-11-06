@@ -49,26 +49,28 @@ const Index = () => {
         })}</script>
       </Helmet>
       <Navbar />
-      <Hero />
-      <ValueCalculator />
-      <MissionBlock />
+      <main>
+        <Hero />
+        <ValueCalculator />
+        <MissionBlock />
 
-      <CourseSection
-        title="Модули по психологии"
-        subtitle="8 блоков с научной базой для глубокого понимания людей и процессов"
-        blocks={psychologyBlocks}
-        category="psychology"
-      />
+        <CourseSection
+          title="Модули по психологии"
+          subtitle="8 блоков с научной базой для глубокого понимания людей и процессов"
+          blocks={psychologyBlocks}
+          category="psychology"
+        />
 
-      <CourseSection
-        title="Модули по продажам"
-        subtitle="8 практических блоков для роста выручки и эффективности команды"
-        blocks={salesBlocks}
-        category="sales"
-      />
+        <CourseSection
+          title="Модули по продажам"
+          subtitle="8 практических блоков для роста выручки и эффективности команды"
+          blocks={salesBlocks}
+          category="sales"
+        />
 
-      <PromoVideo />
-      <QuizTest />
+        <PromoVideo />
+        <QuizTest />
+      </main>
       <Footer />
 
       {/* Overlays */}
