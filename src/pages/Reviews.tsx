@@ -21,7 +21,16 @@ const Reviews = () => {
         <meta name="twitter:title" content="Отзывы — Psytix" />
         <meta name="twitter:description" content="Отзывы студентов платформы Psytix. Реальные результаты обучения." />
         <meta name="twitter:image" content="https://psytix.ru/og-image.png" />
+        <meta property="og:locale" content="ru_RU" />
         <link rel="canonical" href="https://psytix.ru/reviews" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://psytix.ru" },
+            { "@type": "ListItem", "position": 2, "name": "Отзывы", "item": "https://psytix.ru/reviews" }
+          ]
+        })}</script>
       </Helmet>
       <div className="min-h-screen bg-background">
         <Navbar />

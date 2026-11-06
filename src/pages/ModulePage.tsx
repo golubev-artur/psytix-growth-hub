@@ -78,7 +78,26 @@ const ModulePage = () => {
         <meta name="twitter:title" content={`${course.title} | Psytix`} />
         <meta name="twitter:description" content={course.description} />
         <meta name="twitter:image" content="https://psytix.ru/og-image.png" />
+        <meta property="og:locale" content="ru_RU" />
         <link rel="canonical" href={`https://psytix.ru/module/${id}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Course",
+          "name": course.title,
+          "description": course.description,
+          "url": `https://psytix.ru/module/${id}`,
+          "inLanguage": "ru-RU",
+          "provider": { "@type": "Organization", "name": "Psytix", "url": "https://psytix.ru" }
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://psytix.ru" },
+            { "@type": "ListItem", "position": 2, "name": categoryLabel, "item": "https://psytix.ru" },
+            { "@type": "ListItem", "position": 3, "name": course.title, "item": `https://psytix.ru/module/${id}` }
+          ]
+        })}</script>
       </Helmet>
       <Navbar />
 

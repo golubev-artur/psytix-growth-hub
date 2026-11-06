@@ -19,7 +19,24 @@ const Blog = () => {
         <meta name="twitter:title" content="Блог Psytix — Статьи по психологии и продажам" />
         <meta name="twitter:description" content="Экспертные статьи с графиками и статистикой по психологии и продажам." />
         <meta name="twitter:image" content="https://psytix.ru/og-image.png" />
+        <meta property="og:locale" content="ru_RU" />
         <link rel="canonical" href="https://psytix.ru/blog" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "Блог Psytix",
+          "url": "https://psytix.ru/blog",
+          "inLanguage": "ru-RU",
+          "publisher": { "@type": "Organization", "name": "Psytix", "url": "https://psytix.ru" }
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://psytix.ru" },
+            { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://psytix.ru/blog" }
+          ]
+        })}</script>
       </Helmet>
       <Navbar />
       <div className="pt-16">

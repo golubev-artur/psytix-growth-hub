@@ -174,6 +174,14 @@ function writePage(route, { title, description, ogType = "website", image = DEFA
     () => `<meta name="twitter:image" content="${image}" />`
   );
 
+  // og:locale — вставляем если отсутствует
+  if (!/<meta property="og:locale"/.test(html)) {
+    html = html.replace(
+      /<meta property="og:site_name" content="[^"]*"\s*\/?>/,
+      (m) => `${m}\n    <meta property="og:locale" content="ru_RU" />`
+    );
+  }
+
   // Канонический адрес: в шаблоне его нет — вставляем, иначе заменяем
   if (/<link rel="canonical"/.test(html)) {
     html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/?>/, `<link rel="canonical" href="${url}" />`);

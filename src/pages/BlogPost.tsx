@@ -216,8 +216,11 @@ const BlogPostPage = () => {
           "headline": post.title,
           "description": post.excerpt,
           "datePublished": post.date,
+          "dateModified": post.date,
           "url": `https://psytix.ru${getPostUrl(post)}`,
           "image": post.image ? `https://psytix.ru${post.image}` : 'https://psytix.ru/og-image.png',
+          "inLanguage": "ru-RU",
+          "mainEntityOfPage": { "@type": "WebPage", "@id": `https://psytix.ru${getPostUrl(post)}` },
           "publisher": {
             "@type": "Organization",
             "name": "Psytix",

@@ -25,6 +25,7 @@ const Index = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Psytix — Психология и продажи в одной системе" />
         <meta name="twitter:description" content="16 модулей с научной базой для роста в психологии и продажах." />
+        <meta property="og:locale" content="ru_RU" />
         <link rel="canonical" href="https://psytix.ru/" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
