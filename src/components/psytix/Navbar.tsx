@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -55,7 +55,7 @@ const Navbar = () => {
       />
       <div className="container mx-auto px-6 flex items-center justify-between h-16">
         <Link to="/" className="text-xl font-bold gradient-text flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <Brain className="w-5 h-5 text-primary" />
           Psytix
         </Link>
 
