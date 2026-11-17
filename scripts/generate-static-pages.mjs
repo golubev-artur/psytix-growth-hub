@@ -105,6 +105,18 @@ function paragraphs(text) {
     .join("\n");
 }
 
+function siteNav() {
+  return (
+    `<nav><ul>` +
+    `<li><a href="/">Главная</a></li>` +
+    `<li><a href="/blog">Блог Psytix</a></li>` +
+    `<li><a href="/mariyalozovaya">Мария Лозовая — Клинический психолог</a></li>` +
+    `<li><a href="/arturgolubev">Артур Голубев — Преподаватель по продажам</a></li>` +
+    `<li><a href="/reviews">Отзывы</a></li>` +
+    `</ul></nav>`
+  );
+}
+
 function breadcrumbSchema(trail) {
   return {
     "@context": "https://schema.org",
@@ -196,10 +208,11 @@ function writePage(route, { title, description, ogType = "website", image = DEFA
     html = html.replace("</head>", () => ld + "  </head>");
   }
 
-  // Контент в #root: бот видит текст страницы без выполнения JS,
-  // React затем перерисовывает разметку при гидратации.
   if (body) {
-    html = html.replace('<div id="root"></div>', () => `<div id="root">${body}</div>`);
+    html = html.replace(
+      '<div id="root"></div>',
+      () => `<div id="root"></div>\n    <noscript>${body}${siteNav()}</noscript>`
+    );
   }
 
   const dir = route === "/" ? DIST : path.join(DIST, route.replace(/^\//, ""));
@@ -221,11 +234,14 @@ for (const post of posts) {
   const imgField = fieldAfterSlug(post.slug, /image:\s*'([^']+)'/);
   const img = imgField ? `${SITE}${imgField}` : DEFAULT_IMAGE;
   const author = post.category === "psy" ? "Лозовая Мария Александровна" : "Голубев Артур Артурович";
+  const authorLink = post.category === "psy"
+    ? `<a href="/mariyalozovaya">Лозовая Мария Александровна</a>`
+    : `<a href="/arturgolubev">Голубев Артур Артурович</a>`;
 
   if (!content) console.warn(`  ! Нет content для ${post.slug} — тело не пререндерено`);
 
   const body = content
-    ? `<article><h1>${escapeText(post.title)}</h1>\n<p>${escapeText(post.excerpt)}</p>\n${paragraphs(content)}</article>`
+    ? `<article><h1>${escapeText(post.title)}</h1>\n<p>Автор: ${authorLink}</p>\n<p>${escapeText(post.excerpt)}</p>\n${paragraphs(content)}</article>`
     : "";
 
   const articleSchema = {
@@ -341,6 +357,10 @@ const staticRoutes = [
     body:
       `<h1>Psytix — обучение психологии и продажам</h1>\n` +
       `<p>Образовательная платформа нового поколения: ${psyCount} модулей по психологии и ${salesCount} модулей по продажам с научной базой, реальными метриками и практическими инструментами для роста.</p>\n` +
+      `<h2>Наши специалисты</h2>\n` +
+      `<ul><li><a href="/mariyalozovaya">Мария Лозовая — Клинический психолог, КПТ, гипнотерапия, гештальт</a></li>` +
+      `<li><a href="/arturgolubev">Артур Голубев — Преподаватель по продажам, SPIN, работа с возражениями</a></li></ul>\n` +
+      `<h2>Модули обучения</h2>\n` +
       `<ul>${modules.map((m) => `<li><a href="/module/${m.id}">${escapeText(m.title)}</a> — ${escapeText(m.description)}</li>`).join("")}</ul>`,
     schemas: [
       {
@@ -376,6 +396,7 @@ const staticRoutes = [
     body:
       `<h1>Блог Psytix — статьи по психологии и продажам</h1>\n` +
       `<p>Экспертные статьи с графиками и статистикой: психология влияния, когнитивные искажения, эмоциональный интеллект, техники продаж и переговоров.</p>\n` +
+      `<p>Авторы блога: <a href="/mariyalozovaya">Мария Лозовая</a> (психология) и <a href="/arturgolubev">Артур Голубев</a> (продажи).</p>\n` +
       `<ul>${posts
         .slice()
         .reverse()
